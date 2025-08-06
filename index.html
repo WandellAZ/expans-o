@@ -31,6 +31,13 @@
     .title {
       font-size: 22px;
       margin-bottom: 20px;
+      font-weight: bold;
+    }
+
+    .name {
+      font-size: 28px;
+      font-weight: bold;
+      margin: 15px 0;
     }
 
     .emoji {
@@ -49,6 +56,27 @@
       word-break: break-all;
       margin-top: 20px;
     }
+
+    /* Cores específicas para cada dispositivo */
+    .poco-m5-pro {
+      background: linear-gradient(135deg, #2c2c2c, #1a1a1a);
+      color: white;
+    }
+
+    .a55 {
+      background: linear-gradient(135deg, #ffffff, #f0f0f0);
+      color: #333;
+    }
+
+    .a54 {
+      background: linear-gradient(135deg, #0066cc, #004499);
+      color: white;
+    }
+
+    .a34 {
+      background: linear-gradient(135deg, #9933cc, #660099);
+      color: white;
+    }
   </style>
 </head>
 <body>
@@ -61,27 +89,30 @@
     const width = window.screen.width;
     const app = document.getElementById('app');
   
-    function renderContent(title, emoji, descricao) {
+    function renderContent(title, emoji, name, deviceClass) {
+      app.className = `phone-frame ${deviceClass}`;
       app.innerHTML = `
         <div class="title">${title}</div>
         <div class="emoji">${emoji}</div>
-        <p>${descricao}</p>
+        <div class="name">${name}</div>
         <div class="debug">User-Agent: ${userAgent}<br/>Largura da tela: ${width}px</div>
       `;
     }
   
-    if (userAgent.includes("poco") || width <= 400) {
-      renderContent("Você está usando um Poco (ou tela pequena)!", "🐱", "Aqui está um gato dançando!");
-    } else if (userAgent.includes("sm-a705m") || width === 1080) {
-      renderContent("Você está usando um Samsung A70!", "🐶", "Aqui está um cachorro dançando!");
+    // Detecção específica para cada dispositivo
+    if (userAgent.includes("poco") && userAgent.includes("m5")) {
+      renderContent("Poco M5 Pro Detectado!", "🐱", "Wandell", "poco-m5-pro");
+    } else if (userAgent.includes("sm-a555") || userAgent.includes("a55")) {
+      renderContent("Samsung A55 Detectado!", "🐱", "Ana", "a55");
+    } else if (userAgent.includes("sm-a545") || userAgent.includes("a54")) {
+      renderContent("Samsung A54 Detectado!", "🐱", "Robson", "a54");
+    } else if (userAgent.includes("sm-a345") || userAgent.includes("a34")) {
+      renderContent("Samsung A34 Detectado!", "🐱", "Jeff", "a34");
     } else {
-      renderContent("Dispositivo desconhecido", "🤖", "Não conseguimos identificar seu aparelho.");
+      // Fallback para dispositivos não identificados
+      renderContent("Dispositivo desconhecido", "🤖", "Não identificado", "");
     }
-    if (navigator.userAgentData) {
-  navigator.userAgentData.getHighEntropyValues(["model"]).then(ua => {
-    console.log("Modelo do dispositivo:", ua.model);
-  });
-}
+    
   </script>
   
 </body>

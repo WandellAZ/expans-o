@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Samsung A55 - Ana</title>
+  <style>
+    body {
+      background: #f0f0f0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .phone-frame {
+      width: 360px;
+      max-width: 90%;
+      height: 640px;
+      background: linear-gradient(135deg, #ffffff, #f0f0f0);
+      border: 3px solid #333;
+      border-radius: 30px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      overflow: hidden;
+      padding: 20px;
+      text-align: center;
+      color: #333;
+    }
+
+    .title {
+      font-size: 22px;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+
+    .name {
+      font-size: 28px;
+      font-weight: bold;
+      margin: 15px 0;
+    }
+
+    .emoji {
+      font-size: 80px;
+      animation: dance 1s infinite alternate;
+    }
+
+    @keyframes dance {
+      0% { transform: rotate(-10deg); }
+      100% { transform: rotate(10deg); }
+    }
+
+    .debug {
+      font-size: 12px;
+      opacity: 0.5;
+      word-break: break-all;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-frame" id="app">
+    <div class="title">Samsung A55 Detectado!</div>
+    <div class="emoji">🐱</div>
+    <div class="name">Ana</div>
+    <div class="debug">Dispositivo: Samsung A55</div>
+  </div>
+</body>
+</html> 
