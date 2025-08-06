@@ -57,6 +57,28 @@
       margin-top: 20px;
     }
 
+    .manual-buttons {
+      margin-top: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .manual-btn {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 5px;
+      background: #007bff;
+      color: white;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .manual-btn:hover {
+      background: #0056b3;
+    }
+
     /* Cores específicas para cada dispositivo */
     .poco-m5-pro {
       background: linear-gradient(135deg, #2c2c2c, #1a1a1a);
@@ -87,6 +109,7 @@
   <script>
     const userAgent = navigator.userAgent.toLowerCase();
     const width = window.screen.width;
+    const height = window.screen.height;
     const app = document.getElementById('app');
   
     function renderContent(title, emoji, name, deviceClass) {
@@ -95,23 +118,144 @@
         <div class="title">${title}</div>
         <div class="emoji">${emoji}</div>
         <div class="name">${name}</div>
-        <div class="debug">User-Agent: ${userAgent}<br/>Largura da tela: ${width}px</div>
+        <div class="debug">
+          User-Agent: ${userAgent}<br/>
+          Largura da tela: ${width}px<br/>
+          Altura da tela: ${height}px<br/>
+          Resolução: ${width}x${height}
+        </div>
+        <div class="manual-buttons">
+          <button class="manual-btn" onclick="forceDevice('poco-m5-pro', 'Wandell')">Poco M5 Pro</button>
+          <button class="manual-btn" onclick="forceDevice('a55', 'Ana')">Samsung A55</button>
+          <button class="manual-btn" onclick="forceDevice('a54', 'Robson')">Samsung A54</button>
+          <button class="manual-btn" onclick="forceDevice('a34', 'Jeff')">Samsung A34</button>
+        </div>
       `;
     }
-  
-    // Detecção específica para cada dispositivo
-    if (userAgent.includes("poco") && userAgent.includes("m5")) {
-      renderContent("Poco M5 Pro Detectado!", "🐱", "Wandell", "poco-m5-pro");
-    } else if (userAgent.includes("sm-a555") || userAgent.includes("a55")) {
-      renderContent("Samsung A55 Detectado!", "🐱", "Ana", "a55");
-    } else if (userAgent.includes("sm-a545") || userAgent.includes("a54")) {
-      renderContent("Samsung A54 Detectado!", "🐱", "Robson", "a54");
-    } else if (userAgent.includes("sm-a345") || userAgent.includes("a34")) {
-      renderContent("Samsung A34 Detectado!", "🐱", "Jeff", "a34");
-    } else {
-      // Fallback para dispositivos não identificados
-      renderContent("Dispositivo desconhecido", "🤖", "Não identificado", "");
+
+    function forceDevice(deviceClass, name) {
+      const titles = {
+        'poco-m5-pro': 'Poco M5 Pro (Manual)',
+        'a55': 'Samsung A55 (Manual)',
+        'a54': 'Samsung A54 (Manual)',
+        'a34': 'Samsung A34 (Manual)'
+      };
+      renderContent(titles[deviceClass], "🐱", name, deviceClass);
     }
+  
+    // Função para detectar dispositivo por múltiplos critérios
+    function detectDevice() {
+      console.log("User-Agent:", userAgent);
+      console.log("Resolução:", width + "x" + height);
+      
+      // Poco M5 Pro - múltiplos padrões de detecção
+      if (userAgent.includes("poco") || 
+          userAgent.includes("m5") || 
+          userAgent.includes("redmi") ||
+          userAgent.includes("xiaomi") ||
+          userAgent.includes("m5s") ||
+          userAgent.includes("m5pro") ||
+          (width >= 1080 && width <= 1200 && height >= 2400 && height <= 2600)) {
+        return {
+          title: "Poco M5 Pro Detectado!",
+          emoji: "🐱",
+          name: "Wandell",
+          class: "poco-m5-pro"
+        };
+      }
+      
+      // Samsung A55 - múltiplos padrões
+      if (userAgent.includes("sm-a555") || 
+          userAgent.includes("a55") ||
+          userAgent.includes("samsung") && userAgent.includes("a55") ||
+          userAgent.includes("sm-a556") ||
+          userAgent.includes("sm-a557") ||
+          userAgent.includes("galaxy a55") ||
+          (width === 1080 && height === 2400) ||
+          (width === 1080 && height === 2340)) {
+        return {
+          title: "Samsung A55 Detectado!",
+          emoji: "🐱",
+          name: "Ana",
+          class: "a55"
+        };
+      }
+      
+      // Samsung A54 - múltiplos padrões
+      if (userAgent.includes("sm-a545") || 
+          userAgent.includes("a54") ||
+          userAgent.includes("samsung") && userAgent.includes("a54") ||
+          userAgent.includes("sm-a546") ||
+          userAgent.includes("sm-a547") ||
+          userAgent.includes("galaxy a54") ||
+          (width === 1080 && height === 2340) ||
+          (width === 1080 && height === 2400)) {
+        return {
+          title: "Samsung A54 Detectado!",
+          emoji: "🐱",
+          name: "Robson",
+          class: "a54"
+        };
+      }
+      
+      // Samsung A34 - múltiplos padrões
+      if (userAgent.includes("sm-a345") || 
+          userAgent.includes("a34") ||
+          userAgent.includes("samsung") && userAgent.includes("a34") ||
+          userAgent.includes("sm-a346") ||
+          userAgent.includes("sm-a347") ||
+          userAgent.includes("galaxy a34") ||
+          (width === 1080 && height === 2400) ||
+          (width === 1080 && height === 2340)) {
+        return {
+          title: "Samsung A34 Detectado!",
+          emoji: "🐱",
+          name: "Jeff",
+          class: "a34"
+        };
+      }
+      
+      // Detecção por resolução específica
+      if (width === 1080 && height === 2400) {
+        return {
+          title: "Dispositivo com resolução 1080x2400",
+          emoji: "🐱",
+          name: "Dispositivo Detectado",
+          class: "a55"
+        };
+      }
+      
+      if (width === 1080 && height === 2340) {
+        return {
+          title: "Dispositivo com resolução 1080x2340",
+          emoji: "🐱",
+          name: "Dispositivo Detectado",
+          class: "a54"
+        };
+      }
+      
+      // Detecção por tamanho de tela
+      if (width <= 400 || height <= 800) {
+        return {
+          title: "Dispositivo com tela pequena",
+          emoji: "🐱",
+          name: "Dispositivo Pequeno",
+          class: "poco-m5-pro"
+        };
+      }
+      
+      // Fallback para dispositivos não identificados
+      return {
+        title: "Dispositivo desconhecido",
+        emoji: "🤖",
+        name: "Não identificado",
+        class: ""
+      };
+    }
+    
+    // Executar detecção
+    const device = detectDevice();
+    renderContent(device.title, device.emoji, device.name, device.class);
     
   </script>
   
