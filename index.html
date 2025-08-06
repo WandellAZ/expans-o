@@ -88,81 +88,37 @@
 <body>
   <div class="phone-frame" id="app">
     <div class="title">Detectando dispositivo...</div>
-    <div class="loading">Conectando com a internet...</div>
+    <div class="loading">Analisando seu dispositivo...</div>
   </div>
 
-  <script src="device-detector.js"></script>
   <script>
     const app = document.getElementById('app');
-  
-    // Função para detectar dispositivo via múltiplas APIs
-    async function detectDeviceViaInternet() {
-      try {
-        const detector = new DeviceDetector();
-        const deviceInfo = await detector.detectDevice();
-        return deviceInfo;
-      } catch (error) {
-        console.log("Erro na detecção, usando fallback:", error);
-        return detectDeviceByLocal();
-      }
+    const userAgent = navigator.userAgent.toLowerCase();
+    const width = window.screen.width;
+    const height = window.screen.height;
+
+    function renderContent(title, emoji, name, deviceClass) {
+      app.className = `phone-frame ${deviceClass}`;
+      app.innerHTML = `
+        <div class="title">${title}</div>
+        <div class="emoji">${emoji}</div>
+        <div class="name">${name}</div>
+        <div class="debug">
+          User-Agent: ${navigator.userAgent}<br/>
+          Largura da tela: ${width}px<br/>
+          Altura da tela: ${height}px<br/>
+          Resolução: ${width}x${height}<br/>
+          Platform: ${navigator.platform}<br/>
+          Vendor: ${navigator.vendor}
+        </div>
+      `;
     }
-  
-    function detectDeviceByCombinedData(uaData, deviceData) {
-      const deviceName = (uaData.device?.brand || deviceData.device?.brand || '').toLowerCase();
-      const modelName = (uaData.device?.model || deviceData.device?.model || '').toLowerCase();
-      
-      console.log("Device Name:", deviceName);
-      console.log("Model Name:", modelName);
-      
-      // Poco M5 Pro
-      if (deviceName.includes('poco') || deviceName.includes('xiaomi') || 
-          modelName.includes('m5') || modelName.includes('poco')) {
-        return {
-          title: "Poco M5 Pro Detectado via Internet!",
-          emoji: "🐱",
-          name: "Wandell",
-          class: "poco-m5-pro"
-        };
-      }
-      
-      // Samsung A55
-      if (deviceName.includes('samsung') && (modelName.includes('a55') || modelName.includes('a55'))) {
-        return {
-          title: "Samsung A55 Detectado via Internet!",
-          emoji: "🐱",
-          name: "Ana",
-          class: "a55"
-        };
-      }
-      
-      // Samsung A54
-      if (deviceName.includes('samsung') && (modelName.includes('a54') || modelName.includes('a54'))) {
-        return {
-          title: "Samsung A54 Detectado via Internet!",
-          emoji: "🐱",
-          name: "Robson",
-          class: "a54"
-        };
-      }
-      
-      // Samsung A34
-      if (deviceName.includes('samsung') && (modelName.includes('a34') || modelName.includes('a34'))) {
-        return {
-          title: "Samsung A34 Detectado via Internet!",
-          emoji: "🐱",
-          name: "Jeff",
-          class: "a34"
-        };
-      }
-      
-      return detectDeviceByLocal();
-    }
-  
-    function detectDeviceByLocal() {
+
+    function detectDevice() {
       console.log("User-Agent:", userAgent);
       console.log("Resolução:", width + "x" + height);
       
-      // Poco M5 Pro - detecção mais específica
+      // Poco M5 Pro
       if (userAgent.includes("poco") || 
           userAgent.includes("m5") || 
           userAgent.includes("redmi") ||
@@ -182,7 +138,7 @@
         };
       }
       
-      // Samsung A55 - detecção mais específica
+      // Samsung A55
       if (userAgent.includes("sm-a555") || 
           userAgent.includes("a55") ||
           userAgent.includes("samsung") && userAgent.includes("a55") ||
@@ -203,7 +159,7 @@
         };
       }
       
-      // Samsung A54 - detecção mais específica
+      // Samsung A54
       if (userAgent.includes("sm-a545") || 
           userAgent.includes("a54") ||
           userAgent.includes("samsung") && userAgent.includes("a54") ||
@@ -224,7 +180,7 @@
         };
       }
       
-      // Samsung A34 - detecção mais específica
+      // Samsung A34
       if (userAgent.includes("sm-a345") || 
           userAgent.includes("a34") ||
           userAgent.includes("samsung") && userAgent.includes("a34") ||
@@ -292,28 +248,17 @@
         class: ""
       };
     }
-  
-    function renderContent(title, emoji, name, deviceClass) {
-      app.className = `phone-frame ${deviceClass}`;
-      app.innerHTML = `
-        <div class="title">${title}</div>
-        <div class="emoji">${emoji}</div>
-        <div class="name">${name}</div>
-        <div class="debug">
-          User-Agent: ${userAgent}<br/>
-          Largura da tela: ${width}px<br/>
-          Altura da tela: ${height}px<br/>
-          Resolução: ${width}x${height}<br/>
-          Platform: ${navigator.platform}<br/>
-          Vendor: ${navigator.vendor}
-        </div>
-      `;
+    
+    // Executar detecção imediatamente
+    function startDetection() {
+      console.log("Iniciando detecção...");
+      const device = detectDevice();
+      console.log("Dispositivo detectado:", device);
+      renderContent(device.title, device.emoji, device.name, device.class);
     }
     
-    // Executar detecção via internet
-    detectDeviceViaInternet().then(device => {
-      renderContent(device.title, device.emoji, device.name, device.class);
-    });
+    // Iniciar detecção
+    startDetection();
     
   </script>
   
