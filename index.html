@@ -171,6 +171,8 @@
           userAgent.includes("sm-a555m") ||
           userAgent.includes("sm-a555u") ||
           userAgent.includes("k") && width === 393 && height === 873 ||
+          userAgent.includes("samsung") && navigator.hardwareConcurrency >= 8 ||
+          userAgent.includes("android") && navigator.hardwareConcurrency >= 8 ||
           (width === 1080 && height === 2400) ||
           (width === 1080 && height === 2340) ||
           (width === 1080 && height === 2408) ||
@@ -193,6 +195,8 @@
           userAgent.includes("sm-a545f") ||
           userAgent.includes("sm-a545m") ||
           userAgent.includes("sm-a545u") ||
+          userAgent.includes("samsung") && navigator.hardwareConcurrency >= 6 && navigator.hardwareConcurrency < 8 ||
+          userAgent.includes("android") && navigator.hardwareConcurrency >= 6 && navigator.hardwareConcurrency < 8 ||
           (width === 1080 && height === 2340) ||
           (width === 1080 && height === 2400) ||
           (width === 1080 && height === 2408)) {
@@ -214,6 +218,8 @@
           userAgent.includes("sm-a345f") ||
           userAgent.includes("sm-a345m") ||
           userAgent.includes("sm-a345u") ||
+          userAgent.includes("samsung") && navigator.hardwareConcurrency < 6 ||
+          userAgent.includes("android") && navigator.hardwareConcurrency < 6 ||
           (width === 1080 && height === 2400) ||
           (width === 1080 && height === 2340) ||
           (width === 1080 && height === 2408)) {
@@ -298,6 +304,34 @@
         }
       }
       
+      // Detecção por resolução específica para Samsung
+      if (width === 1080 && height === 2400) {
+        return {
+          title: "Samsung A55 Detectado!",
+          emoji: "🐱",
+          name: "Ana",
+          class: "a55"
+        };
+      }
+      
+      if (width === 1080 && height === 2340) {
+        return {
+          title: "Samsung A54 Detectado!",
+          emoji: "🐱",
+          name: "Robson",
+          class: "a54"
+        };
+      }
+      
+      if (width === 1080 && height === 2408) {
+        return {
+          title: "Samsung A34 Detectado!",
+          emoji: "🐱",
+          name: "Jeff",
+          class: "a34"
+        };
+      }
+      
       // Detecção por tamanho de tela
       if (width <= 400 || height <= 800) {
         return {
@@ -310,12 +344,36 @@
       
       // Detecção por User-Agent genérico
       if (userAgent.includes("android") && userAgent.includes("mobile")) {
-        return {
-          title: "Dispositivo Android Detectado",
-          emoji: "🐱",
-          name: "Android User",
-          class: "a55"
-        };
+        // Tentar identificar pelo número de cores
+        if (navigator.hardwareConcurrency >= 8) {
+          return {
+            title: "Samsung A55 Detectado!",
+            emoji: "🐱",
+            name: "Ana",
+            class: "a55"
+          };
+        } else if (navigator.hardwareConcurrency >= 6) {
+          return {
+            title: "Samsung A54 Detectado!",
+            emoji: "🐱",
+            name: "Robson",
+            class: "a54"
+          };
+        } else if (navigator.hardwareConcurrency >= 4) {
+          return {
+            title: "Samsung A34 Detectado!",
+            emoji: "🐱",
+            name: "Jeff",
+            class: "a34"
+          };
+        } else {
+          return {
+            title: "Dispositivo Android Detectado",
+            emoji: "🐱",
+            name: "Android User",
+            class: "a55"
+          };
+        }
       }
       
       // Fallback para dispositivos não identificados
