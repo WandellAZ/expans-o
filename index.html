@@ -102,35 +102,102 @@
       try {
         console.log("Detectando modelo específico do dispositivo...");
         
-        // API 1: User-Agent Parser
-        const uaResponse = await fetch(`https://api.useragentapi.com/parse?ua=${encodeURIComponent(navigator.userAgent)}`);
-        const uaData = await uaResponse.json();
-        console.log("User-Agent API:", uaData);
-        
-        // API 2: Device Detector
-        const deviceResponse = await fetch(`https://api.devicedetector.com/v1/detect?user_agent=${encodeURIComponent(navigator.userAgent)}`);
-        const deviceData = await deviceResponse.json();
-        console.log("Device API:", deviceData);
-        
-        // API 3: WhatIsMyBrowser (mais precisa)
-        const wimbResponse = await fetch(`https://api.whatismybrowser.com/api/v2/user_agent_parse?user_agent=${encodeURIComponent(navigator.userAgent)}`);
-        const wimbData = await wimbResponse.json();
-        console.log("WhatIsMyBrowser API:", wimbData);
-        
-        // Combinar dados das APIs
-        const deviceInfo = {
-          brand: uaData.device?.brand || deviceData.device?.brand || wimbData.parse?.hardware_platform || '',
-          model: uaData.device?.model || deviceData.device?.model || wimbData.parse?.hardware_model || '',
-          type: uaData.device?.type || deviceData.device?.type || wimbData.parse?.hardware_type || ''
+        // Coletar características únicas do dispositivo
+        const deviceCharacteristics = {
+          userAgent: navigator.userAgent,
+          platform: navigator.platform,
+          vendor: navigator.vendor,
+          language: navigator.language,
+          cookieEnabled: navigator.cookieEnabled,
+          onLine: navigator.onLine,
+          hardwareConcurrency: navigator.hardwareConcurrency,
+          maxTouchPoints: navigator.maxTouchPoints,
+          deviceMemory: navigator.deviceMemory,
+          connection: navigator.connection?.effectiveType || 'unknown',
+          batteryLevel: await getBatteryLevel(),
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          screenColorDepth: window.screen.colorDepth,
+          screenPixelDepth: window.screen.pixelDepth,
+          devicePixelRatio: window.devicePixelRatio,
+          orientation: window.screen.orientation?.type || 'unknown'
         };
         
-        console.log("Device Info:", deviceInfo);
-        return deviceInfo;
+        console.log("Device Characteristics:", deviceCharacteristics);
+        
+        // Detectar por características únicas
+        return detectByCharacteristics(deviceCharacteristics);
         
       } catch (error) {
-        console.log("Erro nas APIs, usando detecção local:", error);
+        console.log("Erro na detecção, usando fallback:", error);
         return null;
       }
+    }
+    
+    // Função para obter nível da bateria
+    async function getBatteryLevel() {
+      try {
+        if ('getBattery' in navigator) {
+          const battery = await navigator.getBattery();
+          return battery.level;
+        }
+        return null;
+      } catch (error) {
+        return null;
+      }
+    }
+    
+    // Detectar dispositivo por características únicas
+    function detectByCharacteristics(characteristics) {
+      const { userAgent, hardwareConcurrency, maxTouchPoints, deviceMemory, connection, devicePixelRatio } = characteristics;
+      const ua = userAgent.toLowerCase();
+      
+      console.log("Analisando características:", characteristics);
+      
+      // Poco M5 Pro - características específicas
+      if (ua.includes("k") || ua.includes("poco") || ua.includes("xiaomi")) {
+        if (hardwareConcurrency >= 8 && maxTouchPoints >= 5) {
+          return {
+            brand: "Poco",
+            model: "M5 Pro",
+            type: "smartphone"
+          };
+        }
+      }
+      
+      // Samsung A55 - características específicas
+      if (ua.includes("samsung") || ua.includes("android")) {
+        if (hardwareConcurrency >= 8 && devicePixelRatio >= 2.5) {
+          return {
+            brand: "Samsung",
+            model: "A55",
+            type: "smartphone"
+          };
+        }
+      }
+      
+      // Samsung A54 - características específicas
+      if (ua.includes("samsung") || ua.includes("android")) {
+        if (hardwareConcurrency >= 6 && hardwareConcurrency < 8 && devicePixelRatio >= 2.5) {
+          return {
+            brand: "Samsung",
+            model: "A54",
+            type: "smartphone"
+          };
+        }
+      }
+      
+      // Samsung A34 - características específicas
+      if (ua.includes("samsung") || ua.includes("android")) {
+        if (hardwareConcurrency < 6 && devicePixelRatio >= 2.5) {
+          return {
+            brand: "Samsung",
+            model: "A34",
+            type: "smartphone"
+          };
+        }
+      }
+      
+      return null;
     }
 
     function renderContent(title, emoji, name, deviceClass) {
@@ -145,28 +212,26 @@
           Vendor: ${navigator.vendor}<br/>
           CPU Cores: ${navigator.hardwareConcurrency}<br/>
           Touch Points: ${navigator.maxTouchPoints}<br/>
-          Language: ${navigator.language}
+          Language: ${navigator.language}<br/>
+          Device Memory: ${navigator.deviceMemory || 'N/A'} GB<br/>
+          Pixel Ratio: ${window.devicePixelRatio}<br/>
+          Color Depth: ${window.screen.colorDepth} bits<br/>
+          Connection: ${navigator.connection?.effectiveType || 'N/A'}
         </div>
       `;
     }
 
     async function detectDevice() {
       console.log("User-Agent:", userAgent);
-      console.log("Resolução:", width + "x" + height);
       
-      // Primeiro tentar detectar pelo modelo específico
+      // Detectar pelo modelo específico
       const deviceModel = await detectDeviceModel();
       
       if (deviceModel && deviceModel.brand && deviceModel.model) {
         console.log("Modelo detectado:", deviceModel);
         
-        // Detectar por modelo específico
-        const brand = deviceModel.brand.toLowerCase();
-        const model = deviceModel.model.toLowerCase();
-        
         // Poco M5 Pro
-        if (brand.includes('poco') || brand.includes('xiaomi') || 
-            model.includes('m5') || model.includes('poco') || model.includes('redmi')) {
+        if (deviceModel.brand.toLowerCase().includes('poco')) {
           return {
             title: `Poco M5 Pro Detectado! (${deviceModel.brand} ${deviceModel.model})`,
             emoji: "🐱",
@@ -176,7 +241,7 @@
         }
         
         // Samsung A55
-        if (brand.includes('samsung') && (model.includes('a55') || model.includes('a55'))) {
+        if (deviceModel.brand.toLowerCase().includes('samsung') && deviceModel.model.toLowerCase().includes('a55')) {
           return {
             title: `Samsung A55 Detectado! (${deviceModel.brand} ${deviceModel.model})`,
             emoji: "🐱",
@@ -186,7 +251,7 @@
         }
         
         // Samsung A54
-        if (brand.includes('samsung') && (model.includes('a54') || model.includes('a54'))) {
+        if (deviceModel.brand.toLowerCase().includes('samsung') && deviceModel.model.toLowerCase().includes('a54')) {
           return {
             title: `Samsung A54 Detectado! (${deviceModel.brand} ${deviceModel.model})`,
             emoji: "🐱",
@@ -196,7 +261,7 @@
         }
         
         // Samsung A34
-        if (brand.includes('samsung') && (model.includes('a34') || model.includes('a34'))) {
+        if (deviceModel.brand.toLowerCase().includes('samsung') && deviceModel.model.toLowerCase().includes('a34')) {
           return {
             title: `Samsung A34 Detectado! (${deviceModel.brand} ${deviceModel.model})`,
             emoji: "🐱",
