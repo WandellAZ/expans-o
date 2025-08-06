@@ -109,7 +109,10 @@
           Altura da tela: ${height}px<br/>
           Resolução: ${width}x${height}<br/>
           Platform: ${navigator.platform}<br/>
-          Vendor: ${navigator.vendor}
+          Vendor: ${navigator.vendor}<br/>
+          CPU Cores: ${navigator.hardwareConcurrency}<br/>
+          Touch Points: ${navigator.maxTouchPoints}<br/>
+          Language: ${navigator.language}
         </div>
       `;
     }
@@ -118,7 +121,23 @@
       console.log("User-Agent:", userAgent);
       console.log("Resolução:", width + "x" + height);
       
-      // Poco M5 Pro
+      // Detectar por características específicas do dispositivo
+      const deviceInfo = {
+        userAgent: userAgent,
+        width: width,
+        height: height,
+        platform: navigator.platform,
+        vendor: navigator.vendor,
+        language: navigator.language,
+        cookieEnabled: navigator.cookieEnabled,
+        onLine: navigator.onLine,
+        hardwareConcurrency: navigator.hardwareConcurrency,
+        maxTouchPoints: navigator.maxTouchPoints
+      };
+      
+      console.log("Device Info:", deviceInfo);
+      
+      // Poco M5 Pro - detecção mais abrangente
       if (userAgent.includes("poco") || 
           userAgent.includes("m5") || 
           userAgent.includes("redmi") ||
@@ -128,8 +147,11 @@
           userAgent.includes("m5spro") ||
           userAgent.includes("m5pro+") ||
           userAgent.includes("m5spro+") ||
+          userAgent.includes("k") && width === 393 ||
+          userAgent.includes("k") && height === 873 ||
           (width >= 1080 && width <= 1200 && height >= 2400 && height <= 2600) ||
-          (width >= 720 && width <= 800 && height >= 1600 && height <= 1800)) {
+          (width >= 720 && width <= 800 && height >= 1600 && height <= 1800) ||
+          (width >= 390 && width <= 400 && height >= 870 && height <= 880)) {
         return {
           title: "Poco M5 Pro Detectado!",
           emoji: "🐱",
@@ -138,7 +160,7 @@
         };
       }
       
-      // Samsung A55
+      // Samsung A55 - detecção mais abrangente
       if (userAgent.includes("sm-a555") || 
           userAgent.includes("a55") ||
           userAgent.includes("samsung") && userAgent.includes("a55") ||
@@ -148,9 +170,11 @@
           userAgent.includes("sm-a555f") ||
           userAgent.includes("sm-a555m") ||
           userAgent.includes("sm-a555u") ||
+          userAgent.includes("k") && width === 393 && height === 873 ||
           (width === 1080 && height === 2400) ||
           (width === 1080 && height === 2340) ||
-          (width === 1080 && height === 2408)) {
+          (width === 1080 && height === 2408) ||
+          (width >= 390 && width <= 400 && height >= 870 && height <= 880)) {
         return {
           title: "Samsung A55 Detectado!",
           emoji: "🐱",
@@ -220,6 +244,60 @@
         };
       }
       
+      // Detecção por padrão "K" específico
+      if (userAgent.includes("k") && width === 393 && height === 873) {
+        // Tentar identificar pelo padrão específico
+        if (navigator.hardwareConcurrency >= 8) {
+          return {
+            title: "Samsung A55 Detectado!",
+            emoji: "🐱",
+            name: "Ana",
+            class: "a55"
+          };
+        } else if (navigator.hardwareConcurrency >= 6) {
+          return {
+            title: "Samsung A54 Detectado!",
+            emoji: "🐱",
+            name: "Robson",
+            class: "a54"
+          };
+        } else {
+          return {
+            title: "Samsung A34 Detectado!",
+            emoji: "🐱",
+            name: "Jeff",
+            class: "a34"
+          };
+        }
+      }
+      
+      // Detecção por características específicas
+      if (width === 393 && height === 873) {
+        // Baseado no seu dispositivo específico
+        if (navigator.hardwareConcurrency >= 8) {
+          return {
+            title: "Samsung A55 Detectado!",
+            emoji: "🐱",
+            name: "Ana",
+            class: "a55"
+          };
+        } else if (navigator.hardwareConcurrency >= 6) {
+          return {
+            title: "Samsung A54 Detectado!",
+            emoji: "🐱",
+            name: "Robson",
+            class: "a54"
+          };
+        } else {
+          return {
+            title: "Samsung A34 Detectado!",
+            emoji: "🐱",
+            name: "Jeff",
+            class: "a34"
+          };
+        }
+      }
+      
       // Detecção por tamanho de tela
       if (width <= 400 || height <= 800) {
         return {
@@ -254,7 +332,11 @@
       console.log("Iniciando detecção...");
       const device = detectDevice();
       console.log("Dispositivo detectado:", device);
-      renderContent(device.title, device.emoji, device.name, device.class);
+      
+      // Adicionar delay para mostrar a animação de carregamento
+      setTimeout(() => {
+        renderContent(device.title, device.emoji, device.name, device.class);
+      }, 1000);
     }
     
     // Iniciar detecção
