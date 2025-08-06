@@ -1,11 +1,281 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Portfólio Personalizável</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
-    <h1>Começo de alguma coisa</h1>
+    <!-- Tela de Login -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-container">
+            <div class="login-header">
+                <h1><i class="fas fa-user-circle"></i> Login</h1>
+                <p>Entre com suas credenciais</p>
+            </div>
+            <form id="loginForm" class="login-form">
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="username" placeholder="Usuário" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" placeholder="Senha" required>
+                </div>
+                <button type="submit" class="login-btn">
+                    <i class="fas fa-sign-in-alt"></i> Entrar
+                </button>
+            </form>
+            <div class="login-footer">
+                <p>Usuários de teste:</p>
+                <p><strong>Admin:</strong> admin / admin123</p>
+                <p><strong>Usuário:</strong> user / user123</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interface Principal -->
+    <div id="mainInterface" class="main-interface hidden">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1 id="userTitle">Meu Portfólio</h1>
+                <div class="header-actions">
+                    <button id="editModeBtn" class="btn btn-primary">
+                        <i class="fas fa-edit"></i> Editar
+                    </button>
+                    <button id="saveBtn" class="btn btn-success hidden">
+                        <i class="fas fa-save"></i> Salvar
+                    </button>
+                    <button id="logoutBtn" class="btn btn-danger">
+                        <i class="fas fa-sign-out-alt"></i> Sair
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Painel de Edição -->
+        <div id="editPanel" class="edit-panel hidden">
+            <div class="edit-tabs">
+                <button class="tab-btn active" data-tab="profile">
+                    <i class="fas fa-user"></i> Perfil
+                </button>
+                <button class="tab-btn" data-tab="appearance">
+                    <i class="fas fa-palette"></i> Aparência
+                </button>
+                <button class="tab-btn" data-tab="content">
+                    <i class="fas fa-file-alt"></i> Conteúdo
+                </button>
+                <button class="tab-btn" data-tab="effects">
+                    <i class="fas fa-magic"></i> Efeitos 3D
+                </button>
+            </div>
+
+            <div class="tab-content">
+                <!-- Tab Perfil -->
+                <div id="profileTab" class="tab-panel active">
+                    <h3>Informações Pessoais</h3>
+                    <div class="form-group">
+                        <label>Nome Completo:</label>
+                        <input type="text" id="fullName" placeholder="Seu nome completo">
+                    </div>
+                    <div class="form-group">
+                        <label>Título Profissional:</label>
+                        <input type="text" id="jobTitle" placeholder="Ex: Desenvolvedor Full Stack">
+                    </div>
+                    <div class="form-group">
+                        <label>Email:</label>
+                        <input type="email" id="email" placeholder="seu@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Telefone:</label>
+                        <input type="tel" id="phone" placeholder="(11) 99999-9999">
+                    </div>
+                    <div class="form-group">
+                        <label>Sobre você:</label>
+                        <textarea id="about" rows="4" placeholder="Conte um pouco sobre você..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Foto de Perfil:</label>
+                        <input type="file" id="profilePhoto" accept="image/*">
+                        <div id="profilePhotoPreview" class="photo-preview"></div>
+                    </div>
+                </div>
+
+                <!-- Tab Aparência -->
+                <div id="appearanceTab" class="tab-panel">
+                    <h3>Personalização Visual</h3>
+                    <div class="form-group">
+                        <label>Tema de Cores:</label>
+                        <select id="colorTheme">
+                            <option value="default">Padrão</option>
+                            <option value="dark">Escuro</option>
+                            <option value="light">Claro</option>
+                            <option value="gradient">Gradiente</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Cor Primária:</label>
+                        <input type="color" id="primaryColor" value="#007bff">
+                    </div>
+                    <div class="form-group">
+                        <label>Cor Secundária:</label>
+                        <input type="color" id="secondaryColor" value="#6c757d">
+                    </div>
+                    <div class="form-group">
+                        <label>Fonte:</label>
+                        <select id="fontFamily">
+                            <option value="Arial, sans-serif">Arial</option>
+                            <option value="'Times New Roman', serif">Times New Roman</option>
+                            <option value="'Courier New', monospace">Courier New</option>
+                            <option value="'Georgia', serif">Georgia</option>
+                            <option value="'Verdana', sans-serif">Verdana</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Tamanho da Fonte:</label>
+                        <input type="range" id="fontSize" min="12" max="24" value="16">
+                        <span id="fontSizeValue">16px</span>
+                    </div>
+                </div>
+
+                <!-- Tab Conteúdo -->
+                <div id="contentTab" class="tab-panel">
+                    <h3>Conteúdo do Portfólio</h3>
+                    <div class="form-group">
+                        <label>Experiência Profissional:</label>
+                        <textarea id="experience" rows="4" placeholder="Descreva suas experiências profissionais..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Habilidades:</label>
+                        <textarea id="skills" rows="4" placeholder="Liste suas principais habilidades..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Projetos:</label>
+                        <textarea id="projects" rows="4" placeholder="Descreva seus principais projetos..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Educação:</label>
+                        <textarea id="education" rows="4" placeholder="Informações sobre sua formação..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Links Sociais:</label>
+                        <input type="url" id="linkedin" placeholder="LinkedIn">
+                        <input type="url" id="github" placeholder="GitHub">
+                        <input type="url" id="portfolio" placeholder="Portfólio">
+                    </div>
+                </div>
+
+                <!-- Tab Efeitos 3D -->
+                <div id="effectsTab" class="tab-panel">
+                    <h3>Efeitos 3D e Animações</h3>
+                    <div class="form-group">
+                        <label>Efeito 3D:</label>
+                        <select id="threeDEffect">
+                            <option value="none">Nenhum</option>
+                            <option value="cube">Cubo 3D</option>
+                            <option value="sphere">Esfera 3D</option>
+                            <option value="particles">Partículas</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Velocidade da Animação:</label>
+                        <input type="range" id="animationSpeed" min="0.1" max="2" step="0.1" value="1">
+                        <span id="animationSpeedValue">1x</span>
+                    </div>
+                    <div class="form-group">
+                        <label>Cor do Efeito 3D:</label>
+                        <input type="color" id="effectColor" value="#00ff00">
+                    </div>
+                    <div class="form-group">
+                        <label>Ativar Parallax:</label>
+                        <input type="checkbox" id="parallaxEnabled">
+                    </div>
+                    <div id="threeDPreview" class="three-d-preview"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Área do Portfólio -->
+        <main class="portfolio-area">
+            <div id="portfolioContainer" class="portfolio-container">
+                <!-- Seção de Cabeçalho -->
+                <section class="portfolio-header">
+                    <div class="profile-section">
+                        <div class="profile-photo">
+                            <img id="profileImage" src="https://via.placeholder.com/150" alt="Foto de Perfil">
+                        </div>
+                        <div class="profile-info">
+                            <h2 id="displayName">Seu Nome</h2>
+                            <h3 id="displayTitle">Título Profissional</h3>
+                            <p id="displayAbout">Sobre você aparecerá aqui...</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Seção de Contato -->
+                <section class="contact-section">
+                    <h3>Contato</h3>
+                    <div class="contact-info">
+                        <p><i class="fas fa-envelope"></i> <span id="displayEmail">email@exemplo.com</span></p>
+                        <p><i class="fas fa-phone"></i> <span id="displayPhone">(11) 99999-9999</span></p>
+                    </div>
+                </section>
+
+                <!-- Seção de Experiência -->
+                <section class="experience-section">
+                    <h3>Experiência Profissional</h3>
+                    <div id="displayExperience" class="content-text">
+                        Sua experiência profissional aparecerá aqui...
+                    </div>
+                </section>
+
+                <!-- Seção de Habilidades -->
+                <section class="skills-section">
+                    <h3>Habilidades</h3>
+                    <div id="displaySkills" class="content-text">
+                        Suas habilidades aparecerão aqui...
+                    </div>
+                </section>
+
+                <!-- Seção de Projetos -->
+                <section class="projects-section">
+                    <h3>Projetos</h3>
+                    <div id="displayProjects" class="content-text">
+                        Seus projetos aparecerão aqui...
+                    </div>
+                </section>
+
+                <!-- Seção de Educação -->
+                <section class="education-section">
+                    <h3>Educação</h3>
+                    <div id="displayEducation" class="content-text">
+                        Sua formação aparecerá aqui...
+                    </div>
+                </section>
+
+                <!-- Seção de Links -->
+                <section class="links-section">
+                    <h3>Links</h3>
+                    <div class="social-links">
+                        <a id="linkedinLink" href="#" target="_blank" class="social-link">
+                            <i class="fab fa-linkedin"></i> LinkedIn
+                        </a>
+                        <a id="githubLink" href="#" target="_blank" class="social-link">
+                            <i class="fab fa-github"></i> GitHub
+                        </a>
+                        <a id="portfolioLink" href="#" target="_blank" class="social-link">
+                            <i class="fas fa-globe"></i> Portfólio
+                        </a>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
