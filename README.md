@@ -9,6 +9,7 @@ Um sistema completo de portfólio personalizável com login, edição em tempo r
 - **Usuário Normal**: `user` / `user123`
 - Login persistente (não precisa fazer login toda vez)
 - Logout seguro
+- **Painel de Admin**: Criação e gerenciamento de usuários
 
 ### 🎯 Edição de Portfólio
 - **Perfil**: Nome, título, email, telefone, sobre você, foto de perfil
@@ -46,6 +47,12 @@ Um sistema completo de portfólio personalizável com login, edição em tempo r
    - **Conteúdo**: Experiência, habilidades, projetos
    - **Efeitos 3D**: Animações e efeitos visuais
 
+### 3. Painel de Administração (Apenas Admin)
+1. Faça login como **admin** (`admin` / `admin123`)
+2. Clique no botão **"Gerenciar Usuários"** no cabeçalho
+3. **Criar Usuário**: Preencha o formulário com dados do novo usuário
+4. **Gerenciar Usuários**: Visualize e exclua usuários existentes
+
 ### 3. Personalização
 - **Foto de Perfil**: Clique em "Escolher arquivo" para upload
 - **Cores**: Use os seletores de cor para personalizar
@@ -57,6 +64,12 @@ Um sistema completo de portfólio personalizável com login, edição em tempo r
 1. Clique em **"Salvar"** para guardar suas alterações
 2. Os dados são salvos automaticamente no navegador
 3. Clique em **"Visualizar"** para ver o resultado final
+
+### 5. Gerenciamento de Usuários (Admin)
+- **Criar Usuário**: Nome de usuário, nome completo, senha e tipo
+- **Validações**: Senha mínima 6 caracteres, confirmação de senha
+- **Excluir Usuário**: Remove usuários (exceto o próprio admin)
+- **Tipos de Usuário**: Normal ou Administrador
 
 ## 📁 Estrutura do Projeto
 

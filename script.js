@@ -36,6 +36,10 @@ class PortfolioSystem {
         });
 
         // Botões principais
+        document.getElementById('adminPanelBtn').addEventListener('click', () => {
+            this.toggleAdminPanel();
+        });
+
         document.getElementById('editModeBtn').addEventListener('click', () => {
             this.toggleEditMode();
         });
@@ -53,6 +57,12 @@ class PortfolioSystem {
             btn.addEventListener('click', (e) => {
                 this.switchTab(e.target.dataset.tab);
             });
+        });
+
+        // Formulário de criação de usuário
+        document.getElementById('createUserForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.createUser();
         });
 
         // Campos de edição
@@ -144,11 +154,13 @@ class PortfolioSystem {
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
 
-        if (this.users[username] && this.users[username].password === password) {
+        const allUsers = this.getAllUsers();
+
+        if (allUsers[username] && allUsers[username].password === password) {
             this.currentUser = {
                 username: username,
-                role: this.users[username].role,
-                name: this.users[username].name
+                role: allUsers[username].role,
+                name: allUsers[username].name
             };
             
             localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
@@ -172,6 +184,11 @@ class PortfolioSystem {
         document.getElementById('loginScreen').classList.add('hidden');
         document.getElementById('mainInterface').classList.remove('hidden');
         document.getElementById('userTitle').textContent = `${this.currentUser.name} - Portfólio`;
+        
+        // Mostra botão de admin se for admin
+        if (this.currentUser.role === 'admin') {
+            document.getElementById('adminPanelBtn').classList.remove('hidden');
+        }
     }
 
     logout() {
@@ -180,6 +197,143 @@ class PortfolioSystem {
         document.getElementById('mainInterface').classList.add('hidden');
         document.getElementById('loginScreen').classList.remove('hidden');
         document.getElementById('loginForm').reset();
+    }
+
+    // Métodos de Admin
+    toggleAdminPanel() {
+        const adminPanel = document.getElementById('adminPanel');
+        const editPanel = document.getElementById('editPanel');
+        const adminBtn = document.getElementById('adminPanelBtn');
+        
+        if (adminPanel.classList.contains('hidden')) {
+            // Mostra painel admin
+            adminPanel.classList.remove('hidden');
+            editPanel.classList.add('hidden');
+            adminBtn.innerHTML = '<i class="fas fa-times"></i> Fechar Admin';
+            this.loadUsersList();
+        } else {
+            // Esconde painel admin
+            adminPanel.classList.add('hidden');
+            adminBtn.innerHTML = '<i class="fas fa-users-cog"></i> Gerenciar Usuários';
+        }
+    }
+
+    createUser() {
+        const username = document.getElementById('newUsername').value.trim();
+        const fullName = document.getElementById('newFullName').value.trim();
+        const password = document.getElementById('newPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const role = document.getElementById('newUserRole').value;
+
+        // Validações
+        if (!username || !fullName || !password || !confirmPassword) {
+            alert('Todos os campos são obrigatórios!');
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            alert('As senhas não coincidem!');
+            return;
+        }
+
+        if (password.length < 6) {
+            alert('A senha deve ter pelo menos 6 caracteres!');
+            return;
+        }
+
+        // Verifica se o usuário já existe
+        const allUsers = this.getAllUsers();
+        if (allUsers[username]) {
+            alert('Este nome de usuário já existe!');
+            return;
+        }
+
+        // Cria o novo usuário
+        const newUser = {
+            password: password,
+            role: role,
+            name: fullName
+        };
+
+        // Adiciona ao objeto de usuários
+        allUsers[username] = newUser;
+        
+        // Salva no localStorage
+        localStorage.setItem('users', JSON.stringify(allUsers));
+
+        // Limpa o formulário
+        document.getElementById('createUserForm').reset();
+
+        // Atualiza a lista de usuários
+        this.loadUsersList();
+
+        alert(`Usuário "${fullName}" criado com sucesso!`);
+    }
+
+    getAllUsers() {
+        const savedUsers = localStorage.getItem('users');
+        if (savedUsers) {
+            return JSON.parse(savedUsers);
+        }
+        
+        // Retorna usuários padrão se não existirem
+        return {
+            'admin': {
+                password: 'admin123',
+                role: 'admin',
+                name: 'Administrador'
+            },
+            'user': {
+                password: 'user123',
+                role: 'user',
+                name: 'Usuário'
+            }
+        };
+    }
+
+    loadUsersList() {
+        const usersList = document.getElementById('usersList');
+        const allUsers = this.getAllUsers();
+        
+        usersList.innerHTML = '';
+
+        Object.keys(allUsers).forEach(username => {
+            const user = allUsers[username];
+            const userItem = document.createElement('div');
+            userItem.className = 'user-item';
+            
+            userItem.innerHTML = `
+                <div class="user-info">
+                    <div class="user-name">${user.name}</div>
+                    <div class="user-role ${user.role}">${user.role === 'admin' ? 'Administrador' : 'Usuário'}</div>
+                    <small>@${username}</small>
+                </div>
+                <div class="user-actions">
+                    <button class="btn btn-sm btn-danger" onclick="portfolioSystem.deleteUser('${username}')">
+                        <i class="fas fa-trash"></i> Excluir
+                    </button>
+                </div>
+            `;
+            
+            usersList.appendChild(userItem);
+        });
+    }
+
+    deleteUser(username) {
+        if (username === this.currentUser.username) {
+            alert('Você não pode excluir seu próprio usuário!');
+            return;
+        }
+
+        if (confirm(`Tem certeza que deseja excluir o usuário "${username}"?`)) {
+            const allUsers = this.getAllUsers();
+            delete allUsers[username];
+            
+            localStorage.setItem('users', JSON.stringify(allUsers));
+            this.loadUsersList();
+            
+            alert(`Usuário "${username}" excluído com sucesso!`);
+        }
     }
 
     toggleEditMode() {
@@ -613,6 +767,7 @@ class PortfolioSystem {
 }
 
 // Inicializa o sistema quando a página carrega
+let portfolioSystem;
 document.addEventListener('DOMContentLoaded', () => {
-    new PortfolioSystem();
+    portfolioSystem = new PortfolioSystem();
 }); 
