@@ -57,8 +57,6 @@
       margin-top: 20px;
     }
 
-
-
     /* Cores específicas para cada dispositivo */
     .poco-m5-pro {
       background: linear-gradient(135deg, #2c2c2c, #1a1a1a);
@@ -79,36 +77,88 @@
       background: linear-gradient(135deg, #9933cc, #660099);
       color: white;
     }
+
+    .loading {
+      font-size: 16px;
+      color: #666;
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
   <div class="phone-frame" id="app">
     <div class="title">Detectando dispositivo...</div>
+    <div class="loading">Conectando com a internet...</div>
   </div>
 
+  <script src="device-detector.js"></script>
   <script>
-    const userAgent = navigator.userAgent.toLowerCase();
-    const width = window.screen.width;
-    const height = window.screen.height;
     const app = document.getElementById('app');
   
-    function renderContent(title, emoji, name, deviceClass) {
-      app.className = `phone-frame ${deviceClass}`;
-      app.innerHTML = `
-        <div class="title">${title}</div>
-        <div class="emoji">${emoji}</div>
-        <div class="name">${name}</div>
-        <div class="debug">
-          User-Agent: ${userAgent}<br/>
-          Largura da tela: ${width}px<br/>
-          Altura da tela: ${height}px<br/>
-          Resolução: ${width}x${height}
-        </div>
-      `;
+    // Função para detectar dispositivo via múltiplas APIs
+    async function detectDeviceViaInternet() {
+      try {
+        const detector = new DeviceDetector();
+        const deviceInfo = await detector.detectDevice();
+        return deviceInfo;
+      } catch (error) {
+        console.log("Erro na detecção, usando fallback:", error);
+        return detectDeviceByLocal();
+      }
     }
   
-    // Função para detectar dispositivo por múltiplos critérios
-    function detectDevice() {
+    function detectDeviceByCombinedData(uaData, deviceData) {
+      const deviceName = (uaData.device?.brand || deviceData.device?.brand || '').toLowerCase();
+      const modelName = (uaData.device?.model || deviceData.device?.model || '').toLowerCase();
+      
+      console.log("Device Name:", deviceName);
+      console.log("Model Name:", modelName);
+      
+      // Poco M5 Pro
+      if (deviceName.includes('poco') || deviceName.includes('xiaomi') || 
+          modelName.includes('m5') || modelName.includes('poco')) {
+        return {
+          title: "Poco M5 Pro Detectado via Internet!",
+          emoji: "🐱",
+          name: "Wandell",
+          class: "poco-m5-pro"
+        };
+      }
+      
+      // Samsung A55
+      if (deviceName.includes('samsung') && (modelName.includes('a55') || modelName.includes('a55'))) {
+        return {
+          title: "Samsung A55 Detectado via Internet!",
+          emoji: "🐱",
+          name: "Ana",
+          class: "a55"
+        };
+      }
+      
+      // Samsung A54
+      if (deviceName.includes('samsung') && (modelName.includes('a54') || modelName.includes('a54'))) {
+        return {
+          title: "Samsung A54 Detectado via Internet!",
+          emoji: "🐱",
+          name: "Robson",
+          class: "a54"
+        };
+      }
+      
+      // Samsung A34
+      if (deviceName.includes('samsung') && (modelName.includes('a34') || modelName.includes('a34'))) {
+        return {
+          title: "Samsung A34 Detectado via Internet!",
+          emoji: "🐱",
+          name: "Jeff",
+          class: "a34"
+        };
+      }
+      
+      return detectDeviceByLocal();
+    }
+  
+    function detectDeviceByLocal() {
       console.log("User-Agent:", userAgent);
       console.log("Resolução:", width + "x" + height);
       
@@ -242,10 +292,28 @@
         class: ""
       };
     }
+  
+    function renderContent(title, emoji, name, deviceClass) {
+      app.className = `phone-frame ${deviceClass}`;
+      app.innerHTML = `
+        <div class="title">${title}</div>
+        <div class="emoji">${emoji}</div>
+        <div class="name">${name}</div>
+        <div class="debug">
+          User-Agent: ${userAgent}<br/>
+          Largura da tela: ${width}px<br/>
+          Altura da tela: ${height}px<br/>
+          Resolução: ${width}x${height}<br/>
+          Platform: ${navigator.platform}<br/>
+          Vendor: ${navigator.vendor}
+        </div>
+      `;
+    }
     
-    // Executar detecção
-    const device = detectDevice();
-    renderContent(device.title, device.emoji, device.name, device.class);
+    // Executar detecção via internet
+    detectDeviceViaInternet().then(device => {
+      renderContent(device.title, device.emoji, device.name, device.class);
+    });
     
   </script>
   
