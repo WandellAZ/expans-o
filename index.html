@@ -83,17 +83,38 @@
       color: #666;
       margin-top: 20px;
     }
+
+    .test-button {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    .test-button:hover {
+      background: #0056b3;
+    }
   </style>
 </head>
 <body>
   <div class="phone-frame" id="app">
-    <div class="title">Detectando dispositivo...</div>
-    <div class="loading">Analisando características...</div>
+    <div class="title">Detectar Dispositivo</div>
+    <div class="loading">Clique no botão para detectar</div>
+    <button class="test-button" onclick="startDetection()">Detectar Dispositivo</button>
   </div>
 
   <script>
     const app = document.getElementById('app');
     const userAgent = navigator.userAgent.toLowerCase();
+
+    // Função para detectar dispositivo móvel usando User Agent
+    function isMobileDevice() {
+      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    }
 
     function renderContent(title, emoji, name, deviceClass) {
       app.className = `phone-frame ${deviceClass}`;
@@ -103,59 +124,37 @@
         <div class="name">${name}</div>
         <div class="debug">
           User-Agent: ${navigator.userAgent}<br/>
+          É Mobile: ${isMobileDevice() ? 'Sim' : 'Não'}<br/>
           Platform: ${navigator.platform}<br/>
           Vendor: ${navigator.vendor}<br/>
-          CPU Cores: ${navigator.hardwareConcurrency}<br/>
-          Touch Points: ${navigator.maxTouchPoints}<br/>
-          Language: ${navigator.language}<br/>
-          Device Memory: ${navigator.deviceMemory || 'N/A'} GB<br/>
-          Pixel Ratio: ${window.devicePixelRatio}<br/>
-          Color Depth: ${window.screen.colorDepth} bits<br/>
-          Connection: ${navigator.connection?.effectiveType || 'N/A'}<br/>
           <br/>
-          <strong>Detecção Avançada:</strong><br/>
-          A55 Score: ${calculateDeviceScore('a55')}<br/>
-          A54 Score: ${calculateDeviceScore('a54')}<br/>
-          A34 Score: ${calculateDeviceScore('a34')}
+          <strong>Detecção por User Agent:</strong><br/>
+          Android: ${userAgent.includes('android') ? 'Sim' : 'Não'}<br/>
+          Poco/Xiaomi: ${userAgent.includes('poco') || userAgent.includes('xiaomi') ? 'Sim' : 'Não'}<br/>
+          Samsung: ${userAgent.includes('samsung') ? 'Sim' : 'Não'}
         </div>
+        <button class="test-button" onclick="startDetection()">Detectar Novamente</button>
       `;
     }
 
-    // Função para calcular pontuação do dispositivo
-    function calculateDeviceScore(device) {
-      let score = 0;
-      
-      if (device === 'a55') {
-        if (navigator.hardwareConcurrency >= 8) score += 3;
-        if (navigator.deviceMemory >= 4) score += 2;
-        if (window.devicePixelRatio >= 2.5) score += 2;
-        if (navigator.maxTouchPoints >= 5) score += 1;
-        if (window.screen.colorDepth >= 24) score += 1;
-      } else if (device === 'a54') {
-        if (navigator.hardwareConcurrency >= 6) score += 3;
-        if (navigator.deviceMemory >= 3) score += 2;
-        if (window.devicePixelRatio >= 2.5) score += 2;
-        if (navigator.maxTouchPoints >= 5) score += 1;
-        if (window.screen.colorDepth >= 24) score += 1;
-      } else if (device === 'a34') {
-        if (navigator.hardwareConcurrency >= 4) score += 3;
-        if (navigator.deviceMemory >= 2) score += 2;
-        if (window.devicePixelRatio >= 2.5) score += 2;
-        if (navigator.maxTouchPoints >= 5) score += 1;
-        if (window.screen.colorDepth >= 24) score += 1;
-      }
-      
-      return score;
-    }
-
-    // Função principal de detecção
+    // Função principal de detecção usando User Agent
     function detectDevice() {
-      console.log("Iniciando detecção...");
+      console.log("Iniciando detecção por User Agent...");
       console.log("User-Agent:", navigator.userAgent);
-      console.log("CPU Cores:", navigator.hardwareConcurrency);
-      
-      // Poco M5 Pro - detecção específica
-      if (userAgent.includes("k") || userAgent.includes("poco") || userAgent.includes("xiaomi")) {
+      console.log("É Mobile:", isMobileDevice());
+
+      // Verificar se é um dispositivo móvel
+      if (!isMobileDevice()) {
+        return {
+          title: "Dispositivo Desktop Detectado",
+          emoji: "💻",
+          name: "Desktop User",
+          class: "a55"
+        };
+      }
+
+      // Detecção específica por User Agent
+      if (userAgent.includes("poco") || userAgent.includes("xiaomi")) {
         return {
           title: "Poco M5 Pro Detectado!",
           emoji: "🐱",
@@ -163,73 +162,57 @@
           class: "poco-m5-pro"
         };
       }
-      
-      // Detecção por pontuação
-      const deviceScore = {
-        a55: calculateDeviceScore('a55'),
-        a54: calculateDeviceScore('a54'),
-        a34: calculateDeviceScore('a34')
-      };
-      
-      console.log("Device Scores:", deviceScore);
-      
-      // Determinar dispositivo com maior pontuação
-      const maxScore = Math.max(deviceScore.a55, deviceScore.a54, deviceScore.a34);
-      
-      if (maxScore === deviceScore.a55 && maxScore > 0) {
-        return {
-          title: "Samsung A55 Detectado!",
-          emoji: "🐱",
-          name: "Ana",
-          class: "a55"
-        };
-      } else if (maxScore === deviceScore.a54 && maxScore > 0) {
-        return {
-          title: "Samsung A54 Detectado!",
-          emoji: "🐱",
-          name: "Robson",
-          class: "a54"
-        };
-      } else if (maxScore === deviceScore.a34 && maxScore > 0) {
-        return {
-          title: "Samsung A34 Detectado!",
-          emoji: "🐱",
-          name: "Jeff",
-          class: "a34"
-        };
-      }
-      
-      // Fallback para dispositivos Android
-      if (userAgent.includes("android")) {
-        if (navigator.hardwareConcurrency >= 8) {
+
+      // Detecção de Samsung por User Agent
+      if (userAgent.includes("samsung")) {
+        // Tentar identificar modelo específico do Samsung
+        if (userAgent.includes("sm-a55") || userAgent.includes("a55")) {
           return {
             title: "Samsung A55 Detectado!",
             emoji: "🐱",
             name: "Ana",
             class: "a55"
           };
-        } else if (navigator.hardwareConcurrency >= 6) {
+        } else if (userAgent.includes("sm-a54") || userAgent.includes("a54")) {
           return {
             title: "Samsung A54 Detectado!",
             emoji: "🐱",
             name: "Robson",
             class: "a54"
           };
-        } else {
+        } else if (userAgent.includes("sm-a34") || userAgent.includes("a34")) {
           return {
             title: "Samsung A34 Detectado!",
             emoji: "🐱",
             name: "Jeff",
             class: "a34"
           };
+        } else {
+          // Samsung genérico
+          return {
+            title: "Samsung Detectado!",
+            emoji: "🐱",
+            name: "Samsung User",
+            class: "a55"
+          };
         }
       }
-      
-      // Fallback genérico
+
+      // Dispositivo Android genérico
+      if (userAgent.includes("android")) {
+        return {
+          title: "Dispositivo Android Detectado",
+          emoji: "🐱",
+          name: "Android User",
+          class: "a55"
+        };
+      }
+
+      // Fallback para outros dispositivos móveis
       return {
-        title: "Dispositivo Android Detectado",
-        emoji: "🐱",
-        name: "Android User",
+        title: "Dispositivo Móvel Detectado",
+        emoji: "📱",
+        name: "Mobile User",
         class: "a55"
       };
     }
@@ -238,15 +221,18 @@
     function startDetection() {
       console.log("Iniciando detecção...");
       
+      // Mostrar loading
+      app.innerHTML = `
+        <div class="title">Detectando dispositivo...</div>
+        <div class="loading">Analisando User Agent...</div>
+      `;
+      
       setTimeout(() => {
         const device = detectDevice();
         console.log("Dispositivo detectado:", device);
         renderContent(device.title, device.emoji, device.name, device.class);
       }, 1000);
     }
-    
-    // Iniciar detecção
-    startDetection();
     
   </script>
   
