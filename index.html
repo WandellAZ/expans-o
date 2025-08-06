@@ -97,6 +97,37 @@
     const width = window.screen.width;
     const height = window.screen.height;
 
+    // Função para detectar modelo específico do dispositivo
+    async function detectDeviceModel() {
+      try {
+        console.log("Detectando modelo específico do dispositivo...");
+        
+        // API 1: User-Agent Parser
+        const uaResponse = await fetch(`https://api.useragentapi.com/parse?ua=${encodeURIComponent(navigator.userAgent)}`);
+        const uaData = await uaResponse.json();
+        console.log("User-Agent API:", uaData);
+        
+        // API 2: Device Detector
+        const deviceResponse = await fetch(`https://api.devicedetector.com/v1/detect?user_agent=${encodeURIComponent(navigator.userAgent)}`);
+        const deviceData = await deviceResponse.json();
+        console.log("Device API:", deviceData);
+        
+        // Combinar dados das APIs
+        const deviceInfo = {
+          brand: uaData.device?.brand || deviceData.device?.brand || '',
+          model: uaData.device?.model || deviceData.device?.model || '',
+          type: uaData.device?.type || deviceData.device?.type || ''
+        };
+        
+        console.log("Device Info:", deviceInfo);
+        return deviceInfo;
+        
+      } catch (error) {
+        console.log("Erro nas APIs, usando detecção local:", error);
+        return null;
+      }
+    }
+
     function renderContent(title, emoji, name, deviceClass) {
       app.className = `phone-frame ${deviceClass}`;
       app.innerHTML = `
@@ -117,9 +148,64 @@
       `;
     }
 
-    function detectDevice() {
+    async function detectDevice() {
       console.log("User-Agent:", userAgent);
       console.log("Resolução:", width + "x" + height);
+      
+      // Primeiro tentar detectar pelo modelo específico
+      const deviceModel = await detectDeviceModel();
+      
+      if (deviceModel && deviceModel.brand && deviceModel.model) {
+        console.log("Modelo detectado:", deviceModel);
+        
+        // Detectar por modelo específico
+        const brand = deviceModel.brand.toLowerCase();
+        const model = deviceModel.model.toLowerCase();
+        
+        // Poco M5 Pro
+        if (brand.includes('poco') || brand.includes('xiaomi') || 
+            model.includes('m5') || model.includes('poco') || model.includes('redmi')) {
+          return {
+            title: `Poco M5 Pro Detectado! (${deviceModel.brand} ${deviceModel.model})`,
+            emoji: "🐱",
+            name: "Wandell",
+            class: "poco-m5-pro"
+          };
+        }
+        
+        // Samsung A55
+        if (brand.includes('samsung') && (model.includes('a55') || model.includes('a55'))) {
+          return {
+            title: `Samsung A55 Detectado! (${deviceModel.brand} ${deviceModel.model})`,
+            emoji: "🐱",
+            name: "Ana",
+            class: "a55"
+          };
+        }
+        
+        // Samsung A54
+        if (brand.includes('samsung') && (model.includes('a54') || model.includes('a54'))) {
+          return {
+            title: `Samsung A54 Detectado! (${deviceModel.brand} ${deviceModel.model})`,
+            emoji: "🐱",
+            name: "Robson",
+            class: "a54"
+          };
+        }
+        
+        // Samsung A34
+        if (brand.includes('samsung') && (model.includes('a34') || model.includes('a34'))) {
+          return {
+            title: `Samsung A34 Detectado! (${deviceModel.brand} ${deviceModel.model})`,
+            emoji: "🐱",
+            name: "Jeff",
+            class: "a34"
+          };
+        }
+      }
+      
+      // Se não conseguir detectar pelo modelo, usar detecção local
+      console.log("Usando detecção local...");
       
       // Detectar por características específicas do dispositivo
       const deviceInfo = {
@@ -385,16 +471,131 @@
       };
     }
     
-    // Executar detecção imediatamente
-    function startDetection() {
-      console.log("Iniciando detecção...");
-      const device = detectDevice();
-      console.log("Dispositivo detectado:", device);
+    // Função de detecção local como fallback
+    function detectDeviceLocal() {
+      console.log("Usando detecção local...");
       
-      // Adicionar delay para mostrar a animação de carregamento
-      setTimeout(() => {
+      // Poco M5 Pro
+      if (userAgent.includes("poco") || 
+          userAgent.includes("m5") || 
+          userAgent.includes("redmi") ||
+          userAgent.includes("xiaomi") ||
+          userAgent.includes("m5s") ||
+          userAgent.includes("m5pro") ||
+          userAgent.includes("m5spro") ||
+          userAgent.includes("m5pro+") ||
+          userAgent.includes("m5spro+") ||
+          userAgent.includes("k") && width === 393 ||
+          userAgent.includes("k") && height === 873 ||
+          (width >= 1080 && width <= 1200 && height >= 2400 && height <= 2600) ||
+          (width >= 720 && width <= 800 && height >= 1600 && height <= 1800) ||
+          (width >= 390 && width <= 400 && height >= 870 && height <= 880)) {
+        return {
+          title: "Poco M5 Pro Detectado!",
+          emoji: "🐱",
+          name: "Wandell",
+          class: "poco-m5-pro"
+        };
+      }
+      
+      // Samsung A55
+      if (userAgent.includes("sm-a555") || 
+          userAgent.includes("a55") ||
+          userAgent.includes("samsung") && userAgent.includes("a55") ||
+          userAgent.includes("sm-a556") ||
+          userAgent.includes("sm-a557") ||
+          userAgent.includes("galaxy a55") ||
+          userAgent.includes("sm-a555f") ||
+          userAgent.includes("sm-a555m") ||
+          userAgent.includes("sm-a555u") ||
+          userAgent.includes("samsung") && navigator.hardwareConcurrency >= 8 ||
+          userAgent.includes("android") && navigator.hardwareConcurrency >= 8 ||
+          (width === 1080 && height === 2400) ||
+          (width === 1080 && height === 2340) ||
+          (width === 1080 && height === 2408) ||
+          (width >= 390 && width <= 400 && height >= 870 && height <= 880)) {
+        return {
+          title: "Samsung A55 Detectado!",
+          emoji: "🐱",
+          name: "Ana",
+          class: "a55"
+        };
+      }
+      
+      // Samsung A54
+      if (userAgent.includes("sm-a545") || 
+          userAgent.includes("a54") ||
+          userAgent.includes("samsung") && userAgent.includes("a54") ||
+          userAgent.includes("sm-a546") ||
+          userAgent.includes("sm-a547") ||
+          userAgent.includes("galaxy a54") ||
+          userAgent.includes("sm-a545f") ||
+          userAgent.includes("sm-a545m") ||
+          userAgent.includes("sm-a545u") ||
+          userAgent.includes("samsung") && navigator.hardwareConcurrency >= 6 && navigator.hardwareConcurrency < 8 ||
+          userAgent.includes("android") && navigator.hardwareConcurrency >= 6 && navigator.hardwareConcurrency < 8 ||
+          (width === 1080 && height === 2340) ||
+          (width === 1080 && height === 2400) ||
+          (width === 1080 && height === 2408)) {
+        return {
+          title: "Samsung A54 Detectado!",
+          emoji: "🐱",
+          name: "Robson",
+          class: "a54"
+        };
+      }
+      
+      // Samsung A34
+      if (userAgent.includes("sm-a345") || 
+          userAgent.includes("a34") ||
+          userAgent.includes("samsung") && userAgent.includes("a34") ||
+          userAgent.includes("sm-a346") ||
+          userAgent.includes("sm-a347") ||
+          userAgent.includes("galaxy a34") ||
+          userAgent.includes("sm-a345f") ||
+          userAgent.includes("sm-a345m") ||
+          userAgent.includes("sm-a345u") ||
+          userAgent.includes("samsung") && navigator.hardwareConcurrency < 6 ||
+          userAgent.includes("android") && navigator.hardwareConcurrency < 6 ||
+          (width === 1080 && height === 2400) ||
+          (width === 1080 && height === 2340) ||
+          (width === 1080 && height === 2408)) {
+        return {
+          title: "Samsung A34 Detectado!",
+          emoji: "🐱",
+          name: "Jeff",
+          class: "a34"
+        };
+      }
+      
+      // Fallback genérico
+      return {
+        title: "Dispositivo Android Detectado",
+        emoji: "🐱",
+        name: "Android User",
+        class: "a55"
+      };
+    }
+    
+    // Executar detecção imediatamente
+    async function startDetection() {
+      console.log("Iniciando detecção...");
+      
+      try {
+        const device = await detectDevice();
+        console.log("Dispositivo detectado:", device);
+        
+        // Adicionar delay para mostrar a animação de carregamento
+        setTimeout(() => {
+          renderContent(device.title, device.emoji, device.name, device.class);
+        }, 1000);
+        
+      } catch (error) {
+        console.log("Erro na detecção:", error);
+        // Fallback para detecção local
+        const device = detectDeviceLocal();
         renderContent(device.title, device.emoji, device.name, device.class);
-      }, 1000);
+      }
     }
     
     // Iniciar detecção
