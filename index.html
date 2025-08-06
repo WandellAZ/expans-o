@@ -58,25 +58,31 @@
 
   <script>
     const userAgent = navigator.userAgent.toLowerCase();
+    const width = window.screen.width;
     const app = document.getElementById('app');
-
+  
     function renderContent(title, emoji, descricao) {
       app.innerHTML = `
         <div class="title">${title}</div>
         <div class="emoji">${emoji}</div>
         <p>${descricao}</p>
-        <div class="debug">User-Agent: ${userAgent}</div>
+        <div class="debug">User-Agent: ${userAgent}<br/>Largura da tela: ${width}px</div>
       `;
     }
-
-    // Ajuste essas verificações conforme o userAgent detectado no seu celular real
-    if (userAgent.includes("poco") || userAgent.includes("m5")) {
-      renderContent("Você está usando um Poco!", "🐱", "Aqui está um gato dançando!");
-    } else if (userAgent.includes("sm-a705m") || userAgent.includes("a70")) {
+  
+    if (userAgent.includes("poco") || width <= 400) {
+      renderContent("Você está usando um Poco (ou tela pequena)!", "🐱", "Aqui está um gato dançando!");
+    } else if (userAgent.includes("sm-a705m") || width === 1080) {
       renderContent("Você está usando um Samsung A70!", "🐶", "Aqui está um cachorro dançando!");
     } else {
       renderContent("Dispositivo desconhecido", "🤖", "Não conseguimos identificar seu aparelho.");
     }
+    if (navigator.userAgentData) {
+  navigator.userAgentData.getHighEntropyValues(["model"]).then(ua => {
+    console.log("Modelo do dispositivo:", ua.model);
+  });
+}
   </script>
+  
 </body>
 </html>
