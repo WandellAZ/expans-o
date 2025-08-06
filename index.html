@@ -155,18 +155,16 @@
       
       // Poco M5 Pro - características específicas
       if (ua.includes("k") || ua.includes("poco") || ua.includes("xiaomi")) {
-        if (hardwareConcurrency >= 8 && maxTouchPoints >= 5) {
-          return {
-            brand: "Poco",
-            model: "M5 Pro",
-            type: "smartphone"
-          };
-        }
+        return {
+          brand: "Poco",
+          model: "M5 Pro",
+          type: "smartphone"
+        };
       }
       
       // Samsung A55 - características específicas
       if (ua.includes("samsung") || ua.includes("android")) {
-        if (hardwareConcurrency >= 8 && devicePixelRatio >= 2.5) {
+        if (hardwareConcurrency >= 8) {
           return {
             brand: "Samsung",
             model: "A55",
@@ -177,7 +175,7 @@
       
       // Samsung A54 - características específicas
       if (ua.includes("samsung") || ua.includes("android")) {
-        if (hardwareConcurrency >= 6 && hardwareConcurrency < 8 && devicePixelRatio >= 2.5) {
+        if (hardwareConcurrency >= 6 && hardwareConcurrency < 8) {
           return {
             brand: "Samsung",
             model: "A54",
@@ -188,7 +186,30 @@
       
       // Samsung A34 - características específicas
       if (ua.includes("samsung") || ua.includes("android")) {
-        if (hardwareConcurrency < 6 && devicePixelRatio >= 2.5) {
+        if (hardwareConcurrency < 6) {
+          return {
+            brand: "Samsung",
+            model: "A34",
+            type: "smartphone"
+          };
+        }
+      }
+      
+      // Fallback para dispositivos Android genéricos
+      if (ua.includes("android")) {
+        if (hardwareConcurrency >= 8) {
+          return {
+            brand: "Samsung",
+            model: "A55",
+            type: "smartphone"
+          };
+        } else if (hardwareConcurrency >= 6) {
+          return {
+            brand: "Samsung",
+            model: "A54",
+            type: "smartphone"
+          };
+        } else {
           return {
             brand: "Samsung",
             model: "A34",
@@ -349,7 +370,8 @@
           userAgent.includes("sm-a545m") ||
           userAgent.includes("sm-a545u") ||
           userAgent.includes("samsung") && navigator.hardwareConcurrency >= 6 && navigator.hardwareConcurrency < 8 ||
-          userAgent.includes("android") && navigator.hardwareConcurrency >= 6 && navigator.hardwareConcurrency < 8) {
+          userAgent.includes("android") && navigator.hardwareConcurrency >= 6 && navigator.hardwareConcurrency < 8 ||
+          (navigator.hardwareConcurrency >= 6 && navigator.hardwareConcurrency < 8)) {
         return {
           title: "Samsung A54 Detectado!",
           emoji: "🐱",
@@ -369,7 +391,8 @@
           userAgent.includes("sm-a345m") ||
           userAgent.includes("sm-a345u") ||
           userAgent.includes("samsung") && navigator.hardwareConcurrency < 6 ||
-          userAgent.includes("android") && navigator.hardwareConcurrency < 6) {
+          userAgent.includes("android") && navigator.hardwareConcurrency < 6 ||
+          navigator.hardwareConcurrency < 6) {
         return {
           title: "Samsung A34 Detectado!",
           emoji: "🐱",
@@ -403,6 +426,30 @@
             class: "a34"
           };
         }
+      }
+      
+      // Detecção simples por CPU cores (fallback)
+      if (navigator.hardwareConcurrency >= 8) {
+        return {
+          title: "Samsung A55 Detectado!",
+          emoji: "🐱",
+          name: "Ana",
+          class: "a55"
+        };
+      } else if (navigator.hardwareConcurrency >= 6) {
+        return {
+          title: "Samsung A54 Detectado!",
+          emoji: "🐱",
+          name: "Robson",
+          class: "a54"
+        };
+      } else if (navigator.hardwareConcurrency >= 4) {
+        return {
+          title: "Samsung A34 Detectado!",
+          emoji: "🐱",
+          name: "Jeff",
+          class: "a34"
+        };
       }
       
 
@@ -485,7 +532,8 @@
           userAgent.includes("sm-a555m") ||
           userAgent.includes("sm-a555u") ||
           userAgent.includes("samsung") && navigator.hardwareConcurrency >= 8 ||
-          userAgent.includes("android") && navigator.hardwareConcurrency >= 8) {
+          userAgent.includes("android") && navigator.hardwareConcurrency >= 8 ||
+          navigator.hardwareConcurrency >= 8) {
         return {
           title: "Samsung A55 Detectado!",
           emoji: "🐱",
@@ -552,6 +600,8 @@
     // Executar detecção imediatamente
     async function startDetection() {
       console.log("Iniciando detecção...");
+      console.log("CPU Cores:", navigator.hardwareConcurrency);
+      console.log("User-Agent:", navigator.userAgent);
       
       try {
         const device = await detectDevice();
@@ -566,6 +616,7 @@
         console.log("Erro na detecção:", error);
         // Fallback para detecção local
         const device = detectDeviceLocal();
+        console.log("Usando detecção local:", device);
         renderContent(device.title, device.emoji, device.name, device.class);
       }
     }
