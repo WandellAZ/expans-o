@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Detectar Dispositivo</title>
+  <style>
+    body {
+      background: #f0f0f0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .phone-frame {
+      width: 360px;
+      max-width: 90%;
+      height: 640px;
+      background: white;
+      border: 3px solid #333;
+      border-radius: 30px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      overflow: hidden;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .title {
+      font-size: 22px;
+      margin-bottom: 20px;
+    }
+
+    .emoji {
+      font-size: 80px;
+      animation: dance 1s infinite alternate;
+    }
+
+    @keyframes dance {
+      0% { transform: rotate(-10deg); }
+      100% { transform: rotate(10deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-frame" id="app">
+    <div class="title">Detectando dispositivo...</div>
+  </div>
+
+  <script>
+    const userAgent = navigator.userAgent.toLowerCase();
+    const app = document.getElementById('app');
+
+    function renderContent(title, emoji, descricao) {
+      app.innerHTML = `
+        <div class="title">${title}</div>
+        <div class="emoji">${emoji}</div>
+        <p>${descricao}</p>
+      `;
+    }
+
+    if (userAgent.includes("poco")) {
+      renderContent("Você está usando um Poco!", "🐱", "Aqui está um gato dançando!");
+    } else if (userAgent.includes("samsung") && userAgent.includes("a70")) {
+      renderContent("Você está usando um Samsung A70!", "🐶", "Aqui está um cachorro dançando!");
+    } else {
+      renderContent("Dispositivo desconhecido", "🤖", "Não conseguimos identificar seu aparelho.");
+    }
+  </script>
+</body>
+</html>
