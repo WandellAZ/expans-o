@@ -129,20 +129,22 @@
       let emoji = "💻";
 
       if (isMobile) {
-        if (userAgent.includes("poco") || userAgent.includes("xiaomi")) {
+        // Detecção específica por User Agent - Poco/Xiaomi
+        if (userAgent.includes("poco") || userAgent.includes("xiaomi") || userAgent.includes("redmi")) {
           deviceType = "Poco M5 Pro";
           userName = "Wandell";
           emoji = "🐱";
         } else if (userAgent.includes("samsung")) {
-          if (userAgent.includes("sm-a55") || userAgent.includes("a55")) {
+          // Verificar modelos específicos do Samsung
+          if (userAgent.includes("sm-a55") || userAgent.includes("a55") || userAgent.includes("sm-a556")) {
             deviceType = "Samsung A55";
             userName = "Ana";
             emoji = "🐱";
-          } else if (userAgent.includes("sm-a54") || userAgent.includes("a54")) {
+          } else if (userAgent.includes("sm-a54") || userAgent.includes("a54") || userAgent.includes("sm-a546")) {
             deviceType = "Samsung A54";
             userName = "Robson";
             emoji = "🐱";
-          } else if (userAgent.includes("sm-a34") || userAgent.includes("a34")) {
+          } else if (userAgent.includes("sm-a34") || userAgent.includes("a34") || userAgent.includes("sm-a346")) {
             deviceType = "Samsung A34";
             userName = "Jeff";
             emoji = "🐱";
@@ -152,9 +154,26 @@
             emoji = "🐱";
           }
         } else if (userAgent.includes("android")) {
-          deviceType = "Android Genérico";
-          userName = "Android User";
-          emoji = "🐱";
+          // Tentar identificar por outros padrões
+          if (userAgent.includes("mobile") && (userAgent.includes("a55") || userAgent.includes("a54") || userAgent.includes("a34"))) {
+            if (userAgent.includes("a55")) {
+              deviceType = "Samsung A55";
+              userName = "Ana";
+              emoji = "🐱";
+            } else if (userAgent.includes("a54")) {
+              deviceType = "Samsung A54";
+              userName = "Robson";
+              emoji = "🐱";
+            } else if (userAgent.includes("a34")) {
+              deviceType = "Samsung A34";
+              userName = "Jeff";
+              emoji = "🐱";
+            }
+          } else {
+            deviceType = "Android Genérico";
+            userName = "Android User";
+            emoji = "🐱";
+          }
         } else {
           deviceType = "Dispositivo Móvel";
           userName = "Mobile User";
@@ -179,12 +198,43 @@
         <div class="device-info">
           <strong>Detecção por User Agent:</strong><br>
           Android: <span class="${userAgent.includes('android') ? 'success' : 'error'}">${userAgent.includes('android') ? 'Sim' : 'Não'}</span><br>
-          Poco/Xiaomi: <span class="${userAgent.includes('poco') || userAgent.includes('xiaomi') ? 'success' : 'error'}">${userAgent.includes('poco') || userAgent.includes('xiaomi') ? 'Sim' : 'Não'}</span><br>
+          Poco/Xiaomi: <span class="${userAgent.includes('poco') || userAgent.includes('xiaomi') || userAgent.includes('redmi') ? 'success' : 'error'}">${userAgent.includes('poco') || userAgent.includes('xiaomi') || userAgent.includes('redmi') ? 'Sim' : 'Não'}</span><br>
           Samsung: <span class="${userAgent.includes('samsung') ? 'success' : 'error'}">${userAgent.includes('samsung') ? 'Sim' : 'Não'}</span><br>
-          iPhone: <span class="${userAgent.includes('iphone') ? 'success' : 'error'}">${userAgent.includes('iphone') ? 'Sim' : 'Não'}</span><br>
-          iPad: <span class="${userAgent.includes('ipad') ? 'success' : 'error'}">${userAgent.includes('ipad') ? 'Sim' : 'Não'}</span>
+          SM-A34: <span class="${userAgent.includes('sm-a34') ? 'success' : 'error'}">${userAgent.includes('sm-a34') ? 'Sim' : 'Não'}</span><br>
+          SM-A54: <span class="${userAgent.includes('sm-a54') ? 'success' : 'error'}">${userAgent.includes('sm-a54') ? 'Sim' : 'Não'}</span><br>
+          SM-A55: <span class="${userAgent.includes('sm-a55') ? 'success' : 'error'}">${userAgent.includes('sm-a55') ? 'Sim' : 'Não'}</span><br>
+          A34: <span class="${userAgent.includes('a34') ? 'success' : 'error'}">${userAgent.includes('a34') ? 'Sim' : 'Não'}</span><br>
+          A54: <span class="${userAgent.includes('a54') ? 'success' : 'error'}">${userAgent.includes('a54') ? 'Sim' : 'Não'}</span><br>
+          A55: <span class="${userAgent.includes('a55') ? 'success' : 'error'}">${userAgent.includes('a55') ? 'Sim' : 'Não'}</span><br>
+          <br/>
+          <strong>Análise Detalhada:</strong><br/>
+          ${analyzeUserAgent()}
         </div>
       `;
+    }
+
+    function analyzeUserAgent() {
+      const ua = navigator.userAgent.toLowerCase();
+      let analysis = '';
+      
+      // Verificar padrões específicos
+      if (ua.includes('poco')) analysis += 'Poco detectado<br/>';
+      if (ua.includes('xiaomi')) analysis += 'Xiaomi detectado<br/>';
+      if (ua.includes('redmi')) analysis += 'Redmi detectado<br/>';
+      if (ua.includes('samsung')) analysis += 'Samsung detectado<br/>';
+      if (ua.includes('sm-a34')) analysis += 'SM-A34 detectado<br/>';
+      if (ua.includes('sm-a54')) analysis += 'SM-A54 detectado<br/>';
+      if (ua.includes('sm-a55')) analysis += 'SM-A55 detectado<br/>';
+      if (ua.includes('a34')) analysis += 'A34 detectado<br/>';
+      if (ua.includes('a54')) analysis += 'A54 detectado<br/>';
+      if (ua.includes('a55')) analysis += 'A55 detectado<br/>';
+      
+      // Verificar outros padrões comuns
+      if (ua.includes('mobile')) analysis += 'Mobile detectado<br/>';
+      if (ua.includes('android')) analysis += 'Android detectado<br/>';
+      if (ua.includes('linux')) analysis += 'Linux detectado<br/>';
+      
+      return analysis || 'Nenhum padrão específico encontrado';
     }
 
     function showUserAgent() {

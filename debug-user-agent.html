@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Debug User Agent</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .title {
+      color: #333;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .section {
+      background: #e8f4fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+      border-left: 4px solid #007bff;
+    }
+
+    .user-agent {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 10px 0;
+      font-family: monospace;
+      font-size: 12px;
+      word-break: break-all;
+      border: 1px solid #ddd;
+    }
+
+    .pattern {
+      background: #fff3cd;
+      padding: 10px;
+      border-radius: 5px;
+      margin: 5px 0;
+      font-family: monospace;
+      font-size: 11px;
+    }
+
+    .found {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .not-found {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .button {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 10px 5px;
+    }
+
+    .button:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="title">🔍 Debug User Agent - Análise Detalhada</h1>
+    
+    <div class="section">
+      <h3>📱 User Agent Completo</h3>
+      <div class="user-agent" id="fullUserAgent">Carregando...</div>
+    </div>
+
+    <div class="section">
+      <h3>🎯 Padrões Procurados</h3>
+      <div id="patterns">Analisando...</div>
+    </div>
+
+    <div class="section">
+      <h3>📊 Informações do Navegador</h3>
+      <div id="browserInfo">Carregando...</div>
+    </div>
+
+    <div style="text-align: center;">
+      <button class="button" onclick="analyzeUserAgent()">🔄 Analisar Novamente</button>
+      <button class="button" onclick="copyUserAgent()">📋 Copiar User Agent</button>
+    </div>
+  </div>
+
+  <script>
+    function analyzeUserAgent() {
+      const userAgent = navigator.userAgent;
+      const userAgentLower = userAgent.toLowerCase();
+      
+      // Mostrar User Agent completo
+      document.getElementById('fullUserAgent').textContent = userAgent;
+      
+      // Padrões para procurar
+      const patterns = [
+        'android',
+        'mobile',
+        'samsung',
+        'poco',
+        'xiaomi',
+        'redmi',
+        'sm-a34',
+        'sm-a54',
+        'sm-a55',
+        'a34',
+        'a54',
+        'a55',
+        'sm-a346',
+        'sm-a546',
+        'sm-a556',
+        'linux',
+        'chrome',
+        'firefox',
+        'safari',
+        'edge',
+        'opera'
+      ];
+      
+      let patternsHtml = '';
+      patterns.forEach(pattern => {
+        const found = userAgentLower.includes(pattern);
+        const className = found ? 'found' : 'not-found';
+        patternsHtml += `<div class="pattern ${className}">${pattern}: ${found ? 'ENCONTRADO' : 'NÃO ENCONTRADO'}</div>`;
+      });
+      
+      document.getElementById('patterns').innerHTML = patternsHtml;
+      
+      // Informações do navegador
+      const browserInfo = `
+        <div class="user-agent">
+          <strong>Platform:</strong> ${navigator.platform}<br/>
+          <strong>Vendor:</strong> ${navigator.vendor}<br/>
+          <strong>Language:</strong> ${navigator.language}<br/>
+          <strong>User Agent Data:</strong> ${navigator.userAgentData ? 'Disponível' : 'Não disponível'}<br/>
+          <strong>Hardware Concurrency:</strong> ${navigator.hardwareConcurrency || 'N/A'}<br/>
+          <strong>Device Memory:</strong> ${navigator.deviceMemory || 'N/A'} GB<br/>
+          <strong>Max Touch Points:</strong> ${navigator.maxTouchPoints || 'N/A'}<br/>
+          <strong>Pixel Ratio:</strong> ${window.devicePixelRatio}<br/>
+          <strong>Screen Resolution:</strong> ${window.screen.width}x${window.screen.height}<br/>
+          <strong>Color Depth:</strong> ${window.screen.colorDepth} bits
+        </div>
+      `;
+      
+      document.getElementById('browserInfo').innerHTML = browserInfo;
+    }
+    
+    function copyUserAgent() {
+      const userAgent = navigator.userAgent;
+      navigator.clipboard.writeText(userAgent).then(() => {
+        alert('User Agent copiado para a área de transferência!');
+      }).catch(() => {
+        // Fallback para navegadores que não suportam clipboard API
+        const textArea = document.createElement('textarea');
+        textArea.value = userAgent;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        alert('User Agent copiado para a área de transferência!');
+      });
+    }
+    
+    // Analisar automaticamente ao carregar
+    window.onload = function() {
+      analyzeUserAgent();
+    };
+  </script>
+</body>
+</html> 

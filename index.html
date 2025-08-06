@@ -130,11 +130,42 @@
           <br/>
           <strong>Detecção por User Agent:</strong><br/>
           Android: ${userAgent.includes('android') ? 'Sim' : 'Não'}<br/>
-          Poco/Xiaomi: ${userAgent.includes('poco') || userAgent.includes('xiaomi') ? 'Sim' : 'Não'}<br/>
-          Samsung: ${userAgent.includes('samsung') ? 'Sim' : 'Não'}
+          Poco/Xiaomi: ${userAgent.includes('poco') || userAgent.includes('xiaomi') || userAgent.includes('redmi') ? 'Sim' : 'Não'}<br/>
+          Samsung: ${userAgent.includes('samsung') ? 'Sim' : 'Não'}<br/>
+          SM-A34: ${userAgent.includes('sm-a34') ? 'Sim' : 'Não'}<br/>
+          SM-A54: ${userAgent.includes('sm-a54') ? 'Sim' : 'Não'}<br/>
+          SM-A55: ${userAgent.includes('sm-a55') ? 'Sim' : 'Não'}<br/>
+          <br/>
+          <strong>Análise Detalhada:</strong><br/>
+          ${analyzeUserAgent()}
         </div>
         <button class="test-button" onclick="startDetection()">Detectar Novamente</button>
       `;
+    }
+
+    // Função para analisar User Agent detalhadamente
+    function analyzeUserAgent() {
+      const ua = navigator.userAgent.toLowerCase();
+      let analysis = '';
+      
+      // Verificar padrões específicos
+      if (ua.includes('poco')) analysis += 'Poco detectado<br/>';
+      if (ua.includes('xiaomi')) analysis += 'Xiaomi detectado<br/>';
+      if (ua.includes('redmi')) analysis += 'Redmi detectado<br/>';
+      if (ua.includes('samsung')) analysis += 'Samsung detectado<br/>';
+      if (ua.includes('sm-a34')) analysis += 'SM-A34 detectado<br/>';
+      if (ua.includes('sm-a54')) analysis += 'SM-A54 detectado<br/>';
+      if (ua.includes('sm-a55')) analysis += 'SM-A55 detectado<br/>';
+      if (ua.includes('a34')) analysis += 'A34 detectado<br/>';
+      if (ua.includes('a54')) analysis += 'A54 detectado<br/>';
+      if (ua.includes('a55')) analysis += 'A55 detectado<br/>';
+      
+      // Verificar outros padrões comuns
+      if (ua.includes('mobile')) analysis += 'Mobile detectado<br/>';
+      if (ua.includes('android')) analysis += 'Android detectado<br/>';
+      if (ua.includes('linux')) analysis += 'Linux detectado<br/>';
+      
+      return analysis || 'Nenhum padrão específico encontrado';
     }
 
     // Função principal de detecção usando User Agent
@@ -153,8 +184,8 @@
         };
       }
 
-      // Detecção específica por User Agent
-      if (userAgent.includes("poco") || userAgent.includes("xiaomi")) {
+      // Detecção específica por User Agent - Poco/Xiaomi
+      if (userAgent.includes("poco") || userAgent.includes("xiaomi") || userAgent.includes("redmi")) {
         return {
           title: "Poco M5 Pro Detectado!",
           emoji: "🐱",
@@ -163,24 +194,24 @@
         };
       }
 
-      // Detecção de Samsung por User Agent
+      // Detecção de Samsung por User Agent - mais específica
       if (userAgent.includes("samsung")) {
-        // Tentar identificar modelo específico do Samsung
-        if (userAgent.includes("sm-a55") || userAgent.includes("a55")) {
+        // Verificar modelos específicos do Samsung
+        if (userAgent.includes("sm-a55") || userAgent.includes("a55") || userAgent.includes("sm-a556")) {
           return {
             title: "Samsung A55 Detectado!",
             emoji: "🐱",
             name: "Ana",
             class: "a55"
           };
-        } else if (userAgent.includes("sm-a54") || userAgent.includes("a54")) {
+        } else if (userAgent.includes("sm-a54") || userAgent.includes("a54") || userAgent.includes("sm-a546")) {
           return {
             title: "Samsung A54 Detectado!",
             emoji: "🐱",
             name: "Robson",
             class: "a54"
           };
-        } else if (userAgent.includes("sm-a34") || userAgent.includes("a34")) {
+        } else if (userAgent.includes("sm-a34") || userAgent.includes("a34") || userAgent.includes("sm-a346")) {
           return {
             title: "Samsung A34 Detectado!",
             emoji: "🐱",
@@ -198,8 +229,34 @@
         }
       }
 
-      // Dispositivo Android genérico
+      // Verificar se é Android genérico
       if (userAgent.includes("android")) {
+        // Tentar identificar por outros padrões
+        if (userAgent.includes("mobile") && (userAgent.includes("a55") || userAgent.includes("a54") || userAgent.includes("a34"))) {
+          if (userAgent.includes("a55")) {
+            return {
+              title: "Samsung A55 Detectado!",
+              emoji: "🐱",
+              name: "Ana",
+              class: "a55"
+            };
+          } else if (userAgent.includes("a54")) {
+            return {
+              title: "Samsung A54 Detectado!",
+              emoji: "🐱",
+              name: "Robson",
+              class: "a54"
+            };
+          } else if (userAgent.includes("a34")) {
+            return {
+              title: "Samsung A34 Detectado!",
+              emoji: "🐱",
+              name: "Jeff",
+              class: "a34"
+            };
+          }
+        }
+        
         return {
           title: "Dispositivo Android Detectado",
           emoji: "🐱",
