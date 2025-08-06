@@ -13,7 +13,7 @@
       align-items: center;
       min-height: 100vh;
       margin: 0;
-    } 
+    }
 
     .phone-frame {
       width: 360px;
@@ -42,6 +42,13 @@
       0% { transform: rotate(-10deg); }
       100% { transform: rotate(10deg); }
     }
+
+    .debug {
+      font-size: 12px;
+      opacity: 0.5;
+      word-break: break-all;
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
@@ -58,12 +65,14 @@
         <div class="title">${title}</div>
         <div class="emoji">${emoji}</div>
         <p>${descricao}</p>
+        <div class="debug">User-Agent: ${userAgent}</div>
       `;
     }
 
-    if (userAgent.includes("poco")) {
+    // Ajuste essas verificações conforme o userAgent detectado no seu celular real
+    if (userAgent.includes("poco") || userAgent.includes("m5")) {
       renderContent("Você está usando um Poco!", "🐱", "Aqui está um gato dançando!");
-    } else if (userAgent.includes("samsung") && userAgent.includes("a70")) {
+    } else if (userAgent.includes("sm-a705m") || userAgent.includes("a70")) {
       renderContent("Você está usando um Samsung A70!", "🐶", "Aqui está um cachorro dançando!");
     } else {
       renderContent("Dispositivo desconhecido", "🤖", "Não conseguimos identificar seu aparelho.");
