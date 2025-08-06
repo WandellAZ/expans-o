@@ -31,6 +31,11 @@ app.get('/verificar', (req, res) => {
   res.sendFile(path.join(__dirname, 'verificar-user-agent.html'));
 });
 
+// Rota para coletar-user-agents.html
+app.get('/coletar', (req, res) => {
+  res.sendFile(path.join(__dirname, 'coletar-user-agents.html'));
+});
+
 // Rota para a54.html
 app.get('/a54', (req, res) => {
   res.sendFile(path.join(__dirname, 'a54.html'));
@@ -58,4 +63,5 @@ app.listen(3000, '0.0.0.0', () => {
   console.log("Teste: http://localhost:3000/teste");
   console.log("Teste User Agents: http://localhost:3000/teste-user-agents");
   console.log("Verificar User Agent: http://localhost:3000/verificar");
+  console.log("Coletar User Agents: http://localhost:3000/coletar");
 });
