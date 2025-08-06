@@ -132,6 +132,8 @@
       if (ua.includes('a34')) analysis += 'A34 detectado<br/>';
       if (ua.includes('a54')) analysis += 'A54 detectado<br/>';
       if (ua.includes('a55')) analysis += 'A55 detectado<br/>';
+      if (ua.includes('; k)')) analysis += 'Poco M5 Pro (K) detectado<br/>';
+      if (ua.includes('2312dra50g')) analysis += 'Poco M5 Pro (2312DRA50G) detectado<br/>';
       
       // Verificar outros padrões comuns
       if (ua.includes('mobile')) analysis += 'Mobile detectado<br/>';
@@ -155,14 +157,16 @@
           <br/>
           <strong>Detecção por User Agent:</strong><br/>
           Android: ${userAgent.includes('android') ? 'Sim' : 'Não'}<br/>
-          Poco/Xiaomi: ${userAgent.includes('poco') || userAgent.includes('xiaomi') || userAgent.includes('redmi') ? 'Sim' : 'Não'}<br/>
-          Samsung: ${userAgent.includes('samsung') ? 'Sim' : 'Não'}<br/>
+          Poco/Xiaomi: ${userAgent.includes('poco') || userAgent.includes('xiaomi') || userAgent.includes('redmi') || userAgent.includes('2312dra50g') || userAgent.includes('; k)') ? 'Sim' : 'Não'}<br/>
+          Samsung: ${userAgent.includes('samsung') || userAgent.includes('sm-a') ? 'Sim' : 'Não'}<br/>
           SM-A34: ${userAgent.includes('sm-a34') ? 'Sim' : 'Não'}<br/>
           SM-A54: ${userAgent.includes('sm-a54') ? 'Sim' : 'Não'}<br/>
           SM-A55: ${userAgent.includes('sm-a55') ? 'Sim' : 'Não'}<br/>
           A34: ${userAgent.includes('a34') ? 'Sim' : 'Não'}<br/>
           A54: ${userAgent.includes('a54') ? 'Sim' : 'Não'}<br/>
           A55: ${userAgent.includes('a55') ? 'Sim' : 'Não'}<br/>
+          Poco Code: ${userAgent.includes('2312dra50g') ? 'Sim' : 'Não'}<br/>
+          Poco K: ${userAgent.includes('; k)') ? 'Sim' : 'Não'}<br/>
           <br/>
           <strong>Análise Detalhada:</strong><br/>
           ${analyzeUserAgent()}
@@ -187,8 +191,8 @@
         };
       }
 
-      // DETECÇÃO MELHORADA - Poco/Xiaomi
-      if (userAgent.includes("poco") || userAgent.includes("xiaomi") || userAgent.includes("redmi") || userAgent.includes("mi ")) {
+      // DETECÇÃO MELHORADA - Poco/Xiaomi (incluindo padrão "K")
+      if (userAgent.includes("poco") || userAgent.includes("xiaomi") || userAgent.includes("redmi") || userAgent.includes("mi ") || userAgent.includes("2312dra50g") || userAgent.includes("; k)")) {
         return {
           title: "Poco M5 Pro Detectado!",
           emoji: "🐱",
@@ -197,24 +201,24 @@
         };
       }
 
-      // DETECÇÃO MELHORADA - Samsung
-      if (userAgent.includes("samsung")) {
+      // DETECÇÃO MELHORADA - Samsung (mais padrões reais)
+      if (userAgent.includes("samsung") || userAgent.includes("sm-a")) {
         // Verificar modelos específicos do Samsung com mais padrões
-        if (userAgent.includes("sm-a55") || userAgent.includes("a55") || userAgent.includes("sm-a556") || userAgent.includes("sm-a555")) {
+        if (userAgent.includes("sm-a55") || userAgent.includes("a55") || userAgent.includes("sm-a556") || userAgent.includes("sm-a555") || userAgent.includes("sm-a557")) {
           return {
             title: "Samsung A55 Detectado!",
             emoji: "🐱",
             name: "Ana",
             class: "a55"
           };
-        } else if (userAgent.includes("sm-a54") || userAgent.includes("a54") || userAgent.includes("sm-a546") || userAgent.includes("sm-a545")) {
+        } else if (userAgent.includes("sm-a54") || userAgent.includes("a54") || userAgent.includes("sm-a546") || userAgent.includes("sm-a545") || userAgent.includes("sm-a547")) {
           return {
             title: "Samsung A54 Detectado!",
             emoji: "🐱",
             name: "Robson",
             class: "a54"
           };
-        } else if (userAgent.includes("sm-a34") || userAgent.includes("a34") || userAgent.includes("sm-a346") || userAgent.includes("sm-a345")) {
+        } else if (userAgent.includes("sm-a34") || userAgent.includes("a34") || userAgent.includes("sm-a346") || userAgent.includes("sm-a345") || userAgent.includes("sm-a347")) {
           return {
             title: "Samsung A34 Detectado!",
             emoji: "🐱",
@@ -234,6 +238,16 @@
 
       // DETECÇÃO MELHORADA - Android com análise mais profunda
       if (userAgent.includes("android")) {
+        // Verificar por códigos de modelo específicos primeiro
+        if (userAgent.includes("2312dra50g") || userAgent.includes("2312dra") || userAgent.includes("; k)")) {
+          return {
+            title: "Poco M5 Pro Detectado!",
+            emoji: "🐱",
+            name: "Wandell",
+            class: "poco-m5-pro"
+          };
+        }
+        
         // Tentar identificar por outros padrões mais específicos
         if (userAgent.includes("mobile") && (userAgent.includes("a55") || userAgent.includes("a54") || userAgent.includes("a34"))) {
           if (userAgent.includes("a55")) {
@@ -260,22 +274,22 @@
           }
         }
         
-        // Verificar por padrões de modelo específicos
-        if (userAgent.includes("sm-a55") || userAgent.includes("sm-a556")) {
+        // Verificar por padrões de modelo específicos (mais variações)
+        if (userAgent.includes("sm-a55") || userAgent.includes("sm-a556") || userAgent.includes("sm-a557")) {
           return {
             title: "Samsung A55 Detectado!",
             emoji: "🐱",
             name: "Ana",
             class: "a55"
           };
-        } else if (userAgent.includes("sm-a54") || userAgent.includes("sm-a546")) {
+        } else if (userAgent.includes("sm-a54") || userAgent.includes("sm-a546") || userAgent.includes("sm-a547")) {
           return {
             title: "Samsung A54 Detectado!",
             emoji: "🐱",
             name: "Robson",
             class: "a54"
           };
-        } else if (userAgent.includes("sm-a34") || userAgent.includes("sm-a346")) {
+        } else if (userAgent.includes("sm-a34") || userAgent.includes("sm-a346") || userAgent.includes("sm-a347")) {
           return {
             title: "Samsung A34 Detectado!",
             emoji: "🐱",
