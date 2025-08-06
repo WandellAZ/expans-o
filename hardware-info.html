@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Informações de Hardware</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .title {
+      color: #333;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .section {
+      background: #e8f4fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+      border-left: 4px solid #007bff;
+    }
+
+    .hardware-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 15px;
+      margin: 20px 0;
+    }
+
+    .hardware-card {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+    }
+
+    .hardware-card h4 {
+      margin: 0 0 10px 0;
+      color: #007bff;
+      font-size: 16px;
+    }
+
+    .hardware-item {
+      display: flex;
+      justify-content: space-between;
+      margin: 8px 0;
+      padding: 5px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .hardware-label {
+      font-weight: bold;
+      color: #555;
+    }
+
+    .hardware-value {
+      color: #333;
+      font-family: monospace;
+      font-size: 12px;
+    }
+
+    .button {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 10px 5px;
+    }
+
+    .button:hover {
+      background: #0056b3;
+    }
+
+    .success {
+      color: #28a745;
+      font-weight: bold;
+    }
+
+    .warning {
+      color: #ffc107;
+      font-weight: bold;
+    }
+
+    .info {
+      background: #d1ecf1;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 10px 0;
+      border-left: 4px solid #17a2b8;
+    }
+
+    .detection-result {
+      background: #e8f5e8;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 10px 0;
+      border-left: 4px solid #28a745;
+    }
+
+    .json-output {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 5px;
+      font-family: monospace;
+      font-size: 12px;
+      white-space: pre-wrap;
+      word-break: break-all;
+      border: 1px solid #ddd;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="title">🔧 Informações de Hardware do Dispositivo</h1>
+    
+    <div class="section">
+      <h3>📱 Detecção por Hardware</h3>
+      <div id="hardwareDetection">Analisando hardware...</div>
+    </div>
+
+    <div class="section">
+      <h3>💾 Memória e Processamento</h3>
+      <div class="hardware-grid">
+        <div class="hardware-card">
+          <h4>🖥️ Processador</h4>
+          <div class="hardware-item">
+            <span class="hardware-label">Núcleos:</span>
+            <span class="hardware-value" id="cpuCores">Carregando...</span>
+          </div>
+          <div class="hardware-item">
+            <span class="hardware-label">Arquitetura:</span>
+            <span class="hardware-value" id="cpuArch">Carregando...</span>
+          </div>
+        </div>
+        
+        <div class="hardware-card">
+          <h4>💾 Memória</h4>
+          <div class="hardware-item">
+            <span class="hardware-label">RAM:</span>
+            <span class="hardware-value" id="deviceMemory">Carregando...</span>
+          </div>
+          <div class="hardware-item">
+            <span class="hardware-label">Memória Disponível:</span>
+            <span class="hardware-value" id="memoryInfo">Carregando...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>📺 Tela e Display</h3>
+      <div class="hardware-grid">
+        <div class="hardware-card">
+          <h4>🖥️ Resolução</h4>
+          <div class="hardware-item">
+            <span class="hardware-label">Largura:</span>
+            <span class="hardware-value" id="screenWidth">Carregando...</span>
+          </div>
+          <div class="hardware-item">
+            <span class="hardware-label">Altura:</span>
+            <span class="hardware-value" id="screenHeight">Carregando...</span>
+          </div>
+          <div class="hardware-item">
+            <span class="hardware-label">Pixel Ratio:</span>
+            <span class="hardware-value" id="pixelRatio">Carregando...</span>
+          </div>
+        </div>
+        
+        <div class="hardware-card">
+          <h4>🎨 Cores</h4>
+          <div class="hardware-item">
+            <span class="hardware-label">Profundidade:</span>
+            <span class="hardware-value" id="colorDepth">Carregando...</span>
+          </div>
+          <div class="hardware-item">
+            <span class="hardware-label">Paleta:</span>
+            <span class="hardware-value" id="colorPalette">Carregando...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>👆 Touch e Interação</h3>
+      <div class="hardware-grid">
+        <div class="hardware-card">
+          <h4>👆 Touch</h4>
+          <div class="hardware-item">
+            <span class="hardware-label">Pontos de Toque:</span>
+            <span class="hardware-value" id="touchPoints">Carregando...</span>
+          </div>
+          <div class="hardware-item">
+            <span class="hardware-label">Suporte Touch:</span>
+            <span class="hardware-value" id="touchSupport">Carregando...</span>
+          </div>
+        </div>
+        
+        <div class="hardware-card">
+          <h4>🔋 Bateria</h4>
+          <div class="hardware-item">
+            <span class="hardware-label">Nível:</span>
+            <span class="hardware-value" id="batteryLevel">Carregando...</span>
+          </div>
+          <div class="hardware-item">
+            <span class="hardware-label">Carregando:</span>
+            <span class="hardware-value" id="batteryCharging">Carregando...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>🌐 Rede e Conectividade</h3>
+      <div class="hardware-grid">
+        <div class="hardware-card">
+          <h4>📡 Conexão</h4>
+          <div class="hardware-item">
+            <span class="hardware-label">Tipo:</span>
+            <span class="hardware-value" id="connectionType">Carregando...</span>
+          </div>
+          <div class="hardware-item">
+            <span class="hardware-label">Velocidade:</span>
+            <span class="hardware-value" id="connectionSpeed">Carregando...</span>
+          </div>
+        </div>
+        
+        <div class="hardware-card">
+          <h4>📱 Dispositivo</h4>
+          <div class="hardware-item">
+            <span class="hardware-label">Plataforma:</span>
+            <span class="hardware-value" id="platform">Carregando...</span>
+          </div>
+          <div class="hardware-item">
+            <span class="hardware-label">Vendor:</span>
+            <span class="hardware-value" id="vendor">Carregando...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>📋 Dados Completos (JSON)</h3>
+      <button class="button" onclick="copyHardwareData()">📋 Copiar Dados</button>
+      <div class="json-output" id="jsonOutput">Carregando dados...</div>
+    </div>
+
+    <div class="info">
+      <h3>💡 Como Usar Estas Informações</h3>
+      <p><strong>1. Identificação por Hardware:</strong> Cada dispositivo tem características únicas de hardware</p>
+      <p><strong>2. Combinação de Métodos:</strong> User Agent + Hardware = Detecção mais precisa</p>
+      <p><strong>3. Padrões Específicos:</strong> Número de núcleos, RAM, resolução da tela</p>
+      <p><strong>4. Fallback Robusto:</strong> Se User Agent falhar, hardware pode identificar</p>
+    </div>
+  </div>
+
+  <script>
+    // Função para detectar dispositivo por hardware
+    function detectDeviceByHardware() {
+      const hardware = getHardwareInfo();
+      let deviceType = "Desconhecido";
+      let confidence = 0;
+      let details = [];
+
+      // Poco M5 Pro - Características típicas
+      if (hardware.cpuCores === 8 && hardware.deviceMemory === 8 && 
+          hardware.screenWidth === 1080 && hardware.screenHeight === 2400) {
+        deviceType = "Poco M5 Pro";
+        confidence = 85;
+        details.push("8 núcleos, 8GB RAM, tela 1080x2400");
+      }
+
+      // Samsung A55 - Características típicas
+      if (hardware.cpuCores === 8 && hardware.deviceMemory === 8 && 
+          hardware.screenWidth === 1080 && hardware.screenHeight === 2340) {
+        deviceType = "Samsung A55";
+        confidence = 80;
+        details.push("8 núcleos, 8GB RAM, tela 1080x2340");
+      }
+
+      // Samsung A54 - Características típicas
+      if (hardware.cpuCores === 8 && hardware.deviceMemory === 6 && 
+          hardware.screenWidth === 1080 && hardware.screenHeight === 2340) {
+        deviceType = "Samsung A54";
+        confidence = 80;
+        details.push("8 núcleos, 6GB RAM, tela 1080x2340");
+      }
+
+      // Samsung A34 - Características típicas
+      if (hardware.cpuCores === 8 && hardware.deviceMemory === 6 && 
+          hardware.screenWidth === 1080 && hardware.screenHeight === 2400) {
+        deviceType = "Samsung A34";
+        confidence = 80;
+        details.push("8 núcleos, 6GB RAM, tela 1080x2400");
+      }
+
+      // Detecção por resolução de tela
+      if (hardware.screenWidth === 1080 && hardware.screenHeight === 2400) {
+        if (deviceType === "Desconhecido") {
+          deviceType = "Dispositivo 1080x2400";
+          confidence = 60;
+          details.push("Resolução 1080x2400 detectada");
+        }
+      }
+
+      // Detecção por número de núcleos
+      if (hardware.cpuCores === 8) {
+        if (deviceType === "Desconhecido") {
+          deviceType = "Dispositivo 8 núcleos";
+          confidence = 50;
+          details.push("8 núcleos detectados");
+        }
+      }
+
+      return {
+        deviceType,
+        confidence,
+        details,
+        hardware
+      };
+    }
+
+    // Função para obter informações de hardware
+    function getHardwareInfo() {
+      return {
+        // CPU
+        cpuCores: navigator.hardwareConcurrency || 'N/A',
+        cpuArch: navigator.platform || 'N/A',
+        
+        // Memória
+        deviceMemory: navigator.deviceMemory || 'N/A',
+        memoryInfo: performance.memory ? 
+          `${Math.round(performance.memory.usedJSHeapSize / 1024 / 1024)}MB / ${Math.round(performance.memory.totalJSHeapSize / 1024 / 1024)}MB` : 'N/A',
+        
+        // Tela
+        screenWidth: window.screen.width,
+        screenHeight: window.screen.height,
+        pixelRatio: window.devicePixelRatio,
+        
+        // Cores
+        colorDepth: window.screen.colorDepth,
+        colorPalette: window.screen.pixelDepth,
+        
+        // Touch
+        touchPoints: navigator.maxTouchPoints || 'N/A',
+        touchSupport: 'ontouchstart' in window ? 'Sim' : 'Não',
+        
+        // Bateria (se disponível)
+        batteryLevel: 'getBattery' in navigator ? 'Verificando...' : 'N/A',
+        batteryCharging: 'getBattery' in navigator ? 'Verificando...' : 'N/A',
+        
+        // Rede
+        connectionType: navigator.connection ? navigator.connection.effectiveType : 'N/A',
+        connectionSpeed: navigator.connection ? `${navigator.connection.downlink} Mbps` : 'N/A',
+        
+        // Dispositivo
+        platform: navigator.platform,
+        vendor: navigator.vendor,
+        
+        // User Agent
+        userAgent: navigator.userAgent,
+        
+        // Timestamp
+        timestamp: new Date().toISOString()
+      };
+    }
+
+    // Função para atualizar informações de bateria
+    async function updateBatteryInfo() {
+      if ('getBattery' in navigator) {
+        try {
+          const battery = await navigator.getBattery();
+          document.getElementById('batteryLevel').textContent = `${Math.round(battery.level * 100)}%`;
+          document.getElementById('batteryCharging').textContent = battery.charging ? 'Sim' : 'Não';
+        } catch (error) {
+          document.getElementById('batteryLevel').textContent = 'Erro';
+          document.getElementById('batteryCharging').textContent = 'Erro';
+        }
+      }
+    }
+
+    // Função para copiar dados
+    function copyHardwareData() {
+      const hardware = getHardwareInfo();
+      const detection = detectDeviceByHardware();
+      const data = {
+        hardware,
+        detection,
+        timestamp: new Date().toISOString()
+      };
+      
+      const jsonString = JSON.stringify(data, null, 2);
+      
+      navigator.clipboard.writeText(jsonString).then(() => {
+        alert('Dados de hardware copiados para a área de transferência!');
+      }).catch(() => {
+        // Fallback
+        const textArea = document.createElement('textarea');
+        textArea.value = jsonString;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        alert('Dados de hardware copiados para a área de transferência!');
+      });
+    }
+
+    // Função para atualizar interface
+    function updateInterface() {
+      const hardware = getHardwareInfo();
+      const detection = detectDeviceByHardware();
+      
+      // Atualizar valores de hardware
+      document.getElementById('cpuCores').textContent = hardware.cpuCores;
+      document.getElementById('cpuArch').textContent = hardware.cpuArch;
+      document.getElementById('deviceMemory').textContent = hardware.deviceMemory + ' GB';
+      document.getElementById('memoryInfo').textContent = hardware.memoryInfo;
+      document.getElementById('screenWidth').textContent = hardware.screenWidth + 'px';
+      document.getElementById('screenHeight').textContent = hardware.screenHeight + 'px';
+      document.getElementById('pixelRatio').textContent = hardware.pixelRatio;
+      document.getElementById('colorDepth').textContent = hardware.colorDepth + ' bits';
+      document.getElementById('colorPalette').textContent = hardware.colorPalette + ' bits';
+      document.getElementById('touchPoints').textContent = hardware.touchPoints;
+      document.getElementById('touchSupport').textContent = hardware.touchSupport;
+      document.getElementById('connectionType').textContent = hardware.connectionType;
+      document.getElementById('connectionSpeed').textContent = hardware.connectionSpeed;
+      document.getElementById('platform').textContent = hardware.platform;
+      document.getElementById('vendor').textContent = hardware.vendor;
+      
+      // Atualizar detecção
+      const detectionHtml = `
+        <div class="detection-result">
+          <strong>Dispositivo Detectado:</strong> ${detection.deviceType}<br/>
+          <strong>Confiança:</strong> <span class="${detection.confidence > 70 ? 'success' : 'warning'}">${detection.confidence}%</span><br/>
+          <strong>Detalhes:</strong> ${detection.details.join(', ')}<br/>
+          <strong>Método:</strong> Detecção por Hardware
+        </div>
+      `;
+      document.getElementById('hardwareDetection').innerHTML = detectionHtml;
+      
+      // Atualizar JSON
+      const data = {
+        hardware,
+        detection,
+        timestamp: new Date().toISOString()
+      };
+      document.getElementById('jsonOutput').textContent = JSON.stringify(data, null, 2);
+    }
+    
+    // Inicializar
+    window.onload = function() {
+      updateInterface();
+      updateBatteryInfo();
+      
+      // Atualizar a cada 5 segundos
+      setInterval(updateInterface, 5000);
+    };
+  </script>
+</body>
+</html> 
