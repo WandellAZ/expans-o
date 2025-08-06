@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Teste de User Agents</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .title {
+      color: #333;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .test-section {
+      background: #e8f4fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+      border-left: 4px solid #007bff;
+    }
+
+    .user-agent-input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-family: monospace;
+      font-size: 12px;
+      margin: 10px 0;
+    }
+
+    .button {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 10px 5px;
+    }
+
+    .button:hover {
+      background: #0056b3;
+    }
+
+    .result {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 10px 0;
+      font-family: monospace;
+      font-size: 12px;
+    }
+
+    .success {
+      color: #28a745;
+      font-weight: bold;
+    }
+
+    .error {
+      color: #dc3545;
+      font-weight: bold;
+    }
+
+    .preset-button {
+      background: #6c757d;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 12px;
+      margin: 5px;
+    }
+
+    .preset-button:hover {
+      background: #545b62;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="title">🧪 Teste de User Agents - Detecção de Dispositivos</h1>
+    
+    <div class="test-section">
+      <h3>📱 Testar User Agent Personalizado</h3>
+      <input type="text" id="userAgentInput" class="user-agent-input" placeholder="Cole ou digite um User Agent aqui...">
+      <button class="button" onclick="testCustomUserAgent()">🔍 Testar Detecção</button>
+    </div>
+
+    <div class="test-section">
+      <h3>🎯 User Agents de Exemplo</h3>
+      <p>Clique em um botão para testar com User Agents reais:</p>
+      
+      <button class="preset-button" onclick="setUserAgent('Mozilla/5.0 (Linux; Android 13; SM-A546B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36')">Samsung A54</button>
+      <button class="preset-button" onclick="setUserAgent('Mozilla/5.0 (Linux; Android 13; SM-A556B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36')">Samsung A55</button>
+      <button class="preset-button" onclick="setUserAgent('Mozilla/5.0 (Linux; Android 13; SM-A346B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36')">Samsung A34</button>
+      <button class="preset-button" onclick="setUserAgent('Mozilla/5.0 (Linux; Android 13; 2312DRA50G) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36')">Poco M5 Pro</button>
+      <button class="preset-button" onclick="setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36')">Desktop</button>
+    </div>
+
+    <div class="test-section">
+      <h3>🎯 Resultado da Detecção</h3>
+      <div id="detectionResult">Aguardando teste...</div>
+    </div>
+
+    <div class="test-section">
+      <h3>📊 Análise Detalhada</h3>
+      <div id="detailedAnalysis">Aguardando análise...</div>
+    </div>
+  </div>
+
+  <script>
+    // Função para detectar dispositivo móvel
+    function isMobileDevice(userAgent) {
+      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
+    }
+
+    // Função para analisar User Agent detalhadamente
+    function analyzeUserAgent(userAgent) {
+      const ua = userAgent.toLowerCase();
+      let analysis = '';
+      
+      // Verificar padrões específicos
+      if (ua.includes('poco')) analysis += 'Poco detectado<br/>';
+      if (ua.includes('xiaomi')) analysis += 'Xiaomi detectado<br/>';
+      if (ua.includes('redmi')) analysis += 'Redmi detectado<br/>';
+      if (ua.includes('samsung')) analysis += 'Samsung detectado<br/>';
+      if (ua.includes('sm-a34')) analysis += 'SM-A34 detectado<br/>';
+      if (ua.includes('sm-a54')) analysis += 'SM-A54 detectado<br/>';
+      if (ua.includes('sm-a55')) analysis += 'SM-A55 detectado<br/>';
+      if (ua.includes('a34')) analysis += 'A34 detectado<br/>';
+      if (ua.includes('a54')) analysis += 'A54 detectado<br/>';
+      if (ua.includes('a55')) analysis += 'A55 detectado<br/>';
+      
+      // Verificar outros padrões comuns
+      if (ua.includes('mobile')) analysis += 'Mobile detectado<br/>';
+      if (ua.includes('android')) analysis += 'Android detectado<br/>';
+      if (ua.includes('linux')) analysis += 'Linux detectado<br/>';
+      
+      return analysis || 'Nenhum padrão específico encontrado';
+    }
+
+    // Função principal de detecção
+    function detectDevice(userAgent) {
+      const ua = userAgent.toLowerCase();
+      
+      // Verificar se é um dispositivo móvel
+      if (!isMobileDevice(userAgent)) {
+        return {
+          title: "Dispositivo Desktop Detectado",
+          emoji: "💻",
+          name: "Desktop User",
+          class: "a55"
+        };
+      }
+
+      // DETECÇÃO MELHORADA - Poco/Xiaomi
+      if (ua.includes("poco") || ua.includes("xiaomi") || ua.includes("redmi") || ua.includes("mi ")) {
+        return {
+          title: "Poco M5 Pro Detectado!",
+          emoji: "🐱",
+          name: "Wandell",
+          class: "poco-m5-pro"
+        };
+      }
+
+      // DETECÇÃO MELHORADA - Samsung
+      if (ua.includes("samsung")) {
+        // Verificar modelos específicos do Samsung com mais padrões
+        if (ua.includes("sm-a55") || ua.includes("a55") || ua.includes("sm-a556") || ua.includes("sm-a555")) {
+          return {
+            title: "Samsung A55 Detectado!",
+            emoji: "🐱",
+            name: "Ana",
+            class: "a55"
+          };
+        } else if (ua.includes("sm-a54") || ua.includes("a54") || ua.includes("sm-a546") || ua.includes("sm-a545")) {
+          return {
+            title: "Samsung A54 Detectado!",
+            emoji: "🐱",
+            name: "Robson",
+            class: "a54"
+          };
+        } else if (ua.includes("sm-a34") || ua.includes("a34") || ua.includes("sm-a346") || ua.includes("sm-a345")) {
+          return {
+            title: "Samsung A34 Detectado!",
+            emoji: "🐱",
+            name: "Jeff",
+            class: "a34"
+          };
+        } else {
+          // Samsung genérico
+          return {
+            title: "Samsung Detectado!",
+            emoji: "🐱",
+            name: "Samsung User",
+            class: "a55"
+          };
+        }
+      }
+
+      // DETECÇÃO MELHORADA - Android com análise mais profunda
+      if (ua.includes("android")) {
+        // Tentar identificar por outros padrões mais específicos
+        if (ua.includes("mobile") && (ua.includes("a55") || ua.includes("a54") || ua.includes("a34"))) {
+          if (ua.includes("a55")) {
+            return {
+              title: "Samsung A55 Detectado!",
+              emoji: "🐱",
+              name: "Ana",
+              class: "a55"
+            };
+          } else if (ua.includes("a54")) {
+            return {
+              title: "Samsung A54 Detectado!",
+              emoji: "🐱",
+              name: "Robson",
+              class: "a54"
+            };
+          } else if (ua.includes("a34")) {
+            return {
+              title: "Samsung A34 Detectado!",
+              emoji: "🐱",
+              name: "Jeff",
+              class: "a34"
+            };
+          }
+        }
+        
+        // Verificar por padrões de modelo específicos
+        if (ua.includes("sm-a55") || ua.includes("sm-a556")) {
+          return {
+            title: "Samsung A55 Detectado!",
+            emoji: "🐱",
+            name: "Ana",
+            class: "a55"
+          };
+        } else if (ua.includes("sm-a54") || ua.includes("sm-a546")) {
+          return {
+            title: "Samsung A54 Detectado!",
+            emoji: "🐱",
+            name: "Robson",
+            class: "a54"
+          };
+        } else if (ua.includes("sm-a34") || ua.includes("sm-a346")) {
+          return {
+            title: "Samsung A34 Detectado!",
+            emoji: "🐱",
+            name: "Jeff",
+            class: "a34"
+          };
+        }
+        
+        return {
+          title: "Dispositivo Android Detectado",
+          emoji: "🐱",
+          name: "Android User",
+          class: "a55"
+        };
+      }
+
+      // Fallback para outros dispositivos móveis
+      return {
+        title: "Dispositivo Móvel Detectado",
+        emoji: "📱",
+        name: "Mobile User",
+        class: "a55"
+      };
+    }
+
+    function setUserAgent(userAgent) {
+      document.getElementById('userAgentInput').value = userAgent;
+      testCustomUserAgent();
+    }
+
+    function testCustomUserAgent() {
+      const userAgent = document.getElementById('userAgentInput').value;
+      if (!userAgent) {
+        alert('Por favor, insira um User Agent para testar.');
+        return;
+      }
+
+      const device = detectDevice(userAgent);
+      const ua = userAgent.toLowerCase();
+
+      // Atualizar resultado da detecção
+      document.getElementById('detectionResult').innerHTML = `
+        <div class="result">
+          <strong>Dispositivo:</strong> ${device.title}<br/>
+          <strong>Usuário:</strong> ${device.name} ${device.emoji}<br/>
+          <strong>É Mobile:</strong> <span class="${isMobileDevice(userAgent) ? 'success' : 'error'}">${isMobileDevice(userAgent) ? 'Sim' : 'Não'}</span><br/>
+          <strong>User Agent:</strong> ${userAgent}
+        </div>
+      `;
+
+      // Atualizar análise detalhada
+      document.getElementById('detailedAnalysis').innerHTML = `
+        <div class="result">
+          <strong>Detecção por User Agent:</strong><br/>
+          Android: <span class="${ua.includes('android') ? 'success' : 'error'}">${ua.includes('android') ? 'Sim' : 'Não'}</span><br/>
+          Poco/Xiaomi: <span class="${ua.includes('poco') || ua.includes('xiaomi') || ua.includes('redmi') ? 'success' : 'error'}">${ua.includes('poco') || ua.includes('xiaomi') || ua.includes('redmi') ? 'Sim' : 'Não'}</span><br/>
+          Samsung: <span class="${ua.includes('samsung') ? 'success' : 'error'}">${ua.includes('samsung') ? 'Sim' : 'Não'}</span><br/>
+          SM-A34: <span class="${ua.includes('sm-a34') ? 'success' : 'error'}">${ua.includes('sm-a34') ? 'Sim' : 'Não'}</span><br/>
+          SM-A54: <span class="${ua.includes('sm-a54') ? 'success' : 'error'}">${ua.includes('sm-a54') ? 'Sim' : 'Não'}</span><br/>
+          SM-A55: <span class="${ua.includes('sm-a55') ? 'success' : 'error'}">${ua.includes('sm-a55') ? 'Sim' : 'Não'}</span><br/>
+          A34: <span class="${ua.includes('a34') ? 'success' : 'error'}">${ua.includes('a34') ? 'Sim' : 'Não'}</span><br/>
+          A54: <span class="${ua.includes('a54') ? 'success' : 'error'}">${ua.includes('a54') ? 'Sim' : 'Não'}</span><br/>
+          A55: <span class="${ua.includes('a55') ? 'success' : 'error'}">${ua.includes('a55') ? 'Sim' : 'Não'}</span><br/>
+          <br/>
+          <strong>Análise Detalhada:</strong><br/>
+          ${analyzeUserAgent(userAgent)}
+        </div>
+      `;
+    }
+
+    // Testar com o User Agent atual do navegador
+    window.onload = function() {
+      const currentUserAgent = navigator.userAgent;
+      document.getElementById('userAgentInput').value = currentUserAgent;
+      testCustomUserAgent();
+    };
+  </script>
+</body>
+</html> 
