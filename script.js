@@ -5,6 +5,11 @@ class PortfolioSystem {
         this.isEditMode = false;
         this.portfolioData = {};
         this.threeDScene = null;
+        this.recoveryEmail = null;
+        this.verificationCode = null;
+        this.countdownInterval = null;
+        this.autoSaveTimeout = null;
+        this.autoSaveDelay = 2000; // 2 segundos de delay
         this.init();
     }
 
@@ -33,6 +38,32 @@ class PortfolioSystem {
         document.getElementById('loginForm').addEventListener('submit', (e) => {
             e.preventDefault();
             this.handleLogin();
+        });
+
+        // Recuperação de senha
+        document.getElementById('forgotPasswordLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            this.showForgotPasswordScreen();
+        });
+
+        document.getElementById('backToLogin').addEventListener('click', (e) => {
+            e.preventDefault();
+            this.showLoginScreen();
+        });
+
+        document.getElementById('emailForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.sendVerificationCode();
+        });
+
+        document.getElementById('codeForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.verifyCode();
+        });
+
+        document.getElementById('newPasswordForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.changePassword();
         });
 
         // Botões principais
@@ -78,6 +109,7 @@ class PortfolioSystem {
             if (element) {
                 element.addEventListener('input', () => {
                     this.updatePreview(field);
+                    this.triggerAutoSave();
                 });
             }
         });
@@ -85,27 +117,33 @@ class PortfolioSystem {
         // Foto de perfil
         document.getElementById('profilePhoto').addEventListener('change', (e) => {
             this.handleProfilePhoto(e);
+            this.triggerAutoSave();
         });
 
         // Campos de aparência
         document.getElementById('colorTheme').addEventListener('change', (e) => {
             this.applyTheme(e.target.value);
+            this.triggerAutoSave();
         });
 
         document.getElementById('primaryColor').addEventListener('input', (e) => {
             this.updateColors();
+            this.triggerAutoSave();
         });
 
         document.getElementById('secondaryColor').addEventListener('input', (e) => {
             this.updateColors();
+            this.triggerAutoSave();
         });
 
         document.getElementById('fontFamily').addEventListener('change', (e) => {
             this.updateFonts();
+            this.triggerAutoSave();
         });
 
         document.getElementById('fontSize').addEventListener('input', (e) => {
             this.updateFontSize(e.target.value);
+            this.triggerAutoSave();
         });
 
         // Campos de conteúdo
@@ -115,6 +153,7 @@ class PortfolioSystem {
             if (element) {
                 element.addEventListener('input', () => {
                     this.updatePreview(field);
+                    this.triggerAutoSave();
                 });
             }
         });
@@ -126,6 +165,7 @@ class PortfolioSystem {
             if (element) {
                 element.addEventListener('input', () => {
                     this.updateSocialLinks();
+                    this.triggerAutoSave();
                 });
             }
         });
@@ -135,18 +175,22 @@ class PortfolioSystem {
         // Efeitos 3D
         document.getElementById('threeDEffect').addEventListener('change', (e) => {
             this.setupThreeDEffect(e.target.value);
+            this.triggerAutoSave();
         });
 
         document.getElementById('animationSpeed').addEventListener('input', (e) => {
             this.updateAnimationSpeed(e.target.value);
+            this.triggerAutoSave();
         });
 
         document.getElementById('effectColor').addEventListener('input', (e) => {
             this.updateEffectColor(e.target.value);
+            this.triggerAutoSave();
         });
 
         document.getElementById('parallaxEnabled').addEventListener('change', (e) => {
             this.toggleParallax(e.target.checked);
+            this.triggerAutoSave();
         });
     }
 
@@ -197,6 +241,246 @@ class PortfolioSystem {
         document.getElementById('mainInterface').classList.add('hidden');
         document.getElementById('loginScreen').classList.remove('hidden');
         document.getElementById('loginForm').reset();
+    }
+
+    // Métodos de Recuperação de Senha
+    showForgotPasswordScreen() {
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('forgotPasswordScreen').classList.remove('hidden');
+        this.resetRecoveryForms();
+    }
+
+    showLoginScreen() {
+        document.getElementById('forgotPasswordScreen').classList.add('hidden');
+        document.getElementById('loginScreen').classList.remove('hidden');
+        this.resetRecoveryForms();
+        this.stopCountdown();
+    }
+
+    resetRecoveryForms() {
+        document.getElementById('emailForm').classList.remove('hidden');
+        document.getElementById('codeForm').classList.add('hidden');
+        document.getElementById('newPasswordForm').classList.add('hidden');
+        document.getElementById('emailForm').reset();
+        document.getElementById('codeForm').reset();
+        document.getElementById('newPasswordForm').reset();
+    }
+
+    sendVerificationCode() {
+        const email = document.getElementById('recoveryEmail').value.trim();
+        
+        if (!email) {
+            alert('Por favor, digite seu email!');
+            return;
+        }
+
+        // Verifica se o email existe no sistema
+        const allUsers = this.getAllUsers();
+        const userWithEmail = Object.keys(allUsers).find(username => {
+            const user = allUsers[username];
+            return user.email === email;
+        });
+
+        if (!userWithEmail) {
+            alert('Email não encontrado no sistema!');
+            return;
+        }
+
+        // Gera código de verificação (6 dígitos)
+        const code = Math.floor(100000 + Math.random() * 900000).toString();
+        
+        // Simula envio de email (em produção, aqui seria uma API real)
+        this.recoveryEmail = email;
+        this.verificationCode = code;
+        
+        // Mostra o código na tela (em produção, seria enviado por email)
+        alert(`Código de verificação: ${code}\n\nEm produção, este código seria enviado para ${email}`);
+        
+        // Mostra o formulário de código
+        document.getElementById('emailForm').classList.add('hidden');
+        document.getElementById('codeForm').classList.remove('hidden');
+        document.getElementById('emailDisplay').textContent = email;
+        
+        // Inicia contador de 5 minutos
+        this.startCountdown();
+    }
+
+    startCountdown() {
+        let timeLeft = 300; // 5 minutos em segundos
+        
+        const updateCountdown = () => {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            const display = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            document.getElementById('countdown').textContent = display;
+            
+            if (timeLeft <= 0) {
+                this.stopCountdown();
+                alert('Tempo expirado! Solicite um novo código.');
+                this.resetRecoveryForms();
+                document.getElementById('forgotPasswordScreen').classList.add('hidden');
+                document.getElementById('loginScreen').classList.remove('hidden');
+                return;
+            }
+            
+            timeLeft--;
+        };
+        
+        updateCountdown();
+        this.countdownInterval = setInterval(updateCountdown, 1000);
+    }
+
+    stopCountdown() {
+        if (this.countdownInterval) {
+            clearInterval(this.countdownInterval);
+            this.countdownInterval = null;
+        }
+    }
+
+    verifyCode() {
+        const enteredCode = document.getElementById('verificationCode').value.trim();
+        
+        if (!enteredCode) {
+            alert('Por favor, digite o código de verificação!');
+            return;
+        }
+
+        if (enteredCode === this.verificationCode) {
+            // Código correto
+            this.stopCountdown();
+            document.getElementById('codeForm').classList.add('hidden');
+            document.getElementById('newPasswordForm').classList.remove('hidden');
+        } else {
+            alert('Código incorreto! Tente novamente.');
+            document.getElementById('verificationCode').value = '';
+        }
+    }
+
+    changePassword() {
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmPassword = document.getElementById('confirmNewPassword').value;
+        
+        if (!newPassword || !confirmPassword) {
+            alert('Por favor, preencha todos os campos!');
+            return;
+        }
+
+        if (newPassword !== confirmPassword) {
+            alert('As senhas não coincidem!');
+            return;
+        }
+
+        if (newPassword.length < 6) {
+            alert('A senha deve ter pelo menos 6 caracteres!');
+            return;
+        }
+
+        // Atualiza a senha do usuário
+        const allUsers = this.getAllUsers();
+        const userWithEmail = Object.keys(allUsers).find(username => {
+            const user = allUsers[username];
+            return user.email === this.recoveryEmail;
+        });
+
+        if (userWithEmail) {
+            allUsers[userWithEmail].password = newPassword;
+            localStorage.setItem('users', JSON.stringify(allUsers));
+            
+            alert('Senha alterada com sucesso!');
+            this.showLoginScreen();
+        } else {
+            alert('Erro ao alterar senha. Tente novamente.');
+        }
+    }
+
+    // Métodos de Salvamento Automático
+    triggerAutoSave() {
+        // Cancela o timeout anterior
+        if (this.autoSaveTimeout) {
+            clearTimeout(this.autoSaveTimeout);
+        }
+
+        // Mostra indicador de salvamento
+        this.showSavingIndicator();
+
+        // Agenda o salvamento automático
+        this.autoSaveTimeout = setTimeout(() => {
+            this.autoSave();
+        }, this.autoSaveDelay);
+    }
+
+    showSavingIndicator() {
+        const indicator = document.getElementById('autoSaveIndicator');
+        indicator.classList.add('saving');
+        indicator.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
+    }
+
+    showSavedIndicator() {
+        const indicator = document.getElementById('autoSaveIndicator');
+        indicator.classList.remove('saving');
+        indicator.classList.add('saved');
+        indicator.innerHTML = '<i class="fas fa-check"></i> Salvo!';
+        
+        // Remove a classe 'saved' após 3 segundos
+        setTimeout(() => {
+            indicator.classList.remove('saved');
+            indicator.innerHTML = '<i class="fas fa-save"></i> Salvamento Automático Ativo';
+        }, 3000);
+    }
+
+    autoSave() {
+        // Coleta todos os dados do formulário
+        this.collectFormData();
+        
+        // Salva no localStorage
+        this.saveToLocalStorage();
+        
+        // Mostra indicador de salvo
+        this.showSavedIndicator();
+        
+        console.log('Portfólio salvo automaticamente!');
+    }
+
+    collectFormData() {
+        this.portfolioData = {
+            profile: {
+                fullName: document.getElementById('fullName').value || '',
+                jobTitle: document.getElementById('jobTitle').value || '',
+                email: document.getElementById('email').value || '',
+                phone: document.getElementById('phone').value || '',
+                about: document.getElementById('about').value || '',
+                photo: this.portfolioData.profile?.photo || ''
+            },
+            appearance: {
+                theme: document.getElementById('colorTheme').value || 'default',
+                primaryColor: document.getElementById('primaryColor').value || '#007bff',
+                secondaryColor: document.getElementById('secondaryColor').value || '#6c757d',
+                fontFamily: document.getElementById('fontFamily').value || 'Arial, sans-serif',
+                fontSize: document.getElementById('fontSize').value || 16
+            },
+            content: {
+                experience: document.getElementById('experience').value || '',
+                skills: document.getElementById('skills').value || '',
+                projects: document.getElementById('projects').value || '',
+                education: document.getElementById('education').value || '',
+                linkedin: document.getElementById('linkedin').value || '',
+                github: document.getElementById('github').value || '',
+                portfolio: document.getElementById('portfolio').value || ''
+            },
+            effects: {
+                threeDEffect: document.getElementById('threeDEffect').value || 'none',
+                animationSpeed: document.getElementById('animationSpeed').value || 1,
+                effectColor: document.getElementById('effectColor').value || '#00ff00',
+                parallaxEnabled: document.getElementById('parallaxEnabled').checked || false
+            }
+        };
+    }
+
+    saveToLocalStorage() {
+        if (this.currentUser) {
+            localStorage.setItem(`portfolio_${this.currentUser.username}`, JSON.stringify(this.portfolioData));
+        }
     }
 
     // Métodos de Admin
@@ -252,7 +536,8 @@ class PortfolioSystem {
         const newUser = {
             password: password,
             role: role,
-            name: fullName
+            name: fullName,
+            email: `${username}@exemplo.com` // Email padrão baseado no username
         };
 
         // Adiciona ao objeto de usuários
@@ -267,7 +552,7 @@ class PortfolioSystem {
         // Atualiza a lista de usuários
         this.loadUsersList();
 
-        alert(`Usuário "${fullName}" criado com sucesso!`);
+        alert(`Usuário "${fullName}" criado com sucesso!\nEmail: ${newUser.email}`);
     }
 
     getAllUsers() {
@@ -281,12 +566,14 @@ class PortfolioSystem {
             'admin': {
                 password: 'admin123',
                 role: 'admin',
-                name: 'Administrador'
+                name: 'Administrador',
+                email: 'admin@exemplo.com'
             },
             'user': {
                 password: 'user123',
                 role: 'user',
-                name: 'Usuário'
+                name: 'Usuário',
+                email: 'user@exemplo.com'
             }
         };
     }
@@ -491,6 +778,10 @@ class PortfolioSystem {
                 // Salva a imagem como base64
                 this.portfolioData.profile = this.portfolioData.profile || {};
                 this.portfolioData.profile.photo = e.target.result;
+                
+                // Salva automaticamente
+                this.saveToLocalStorage();
+                this.showSavedIndicator();
             };
             reader.readAsDataURL(file);
         }
@@ -644,44 +935,9 @@ class PortfolioSystem {
     }
 
     savePortfolio() {
-        // Coleta todos os dados do formulário
-        this.portfolioData = {
-            profile: {
-                fullName: document.getElementById('fullName').value,
-                jobTitle: document.getElementById('jobTitle').value,
-                email: document.getElementById('email').value,
-                phone: document.getElementById('phone').value,
-                about: document.getElementById('about').value,
-                photo: this.portfolioData.profile?.photo || ''
-            },
-            appearance: {
-                theme: document.getElementById('colorTheme').value,
-                primaryColor: document.getElementById('primaryColor').value,
-                secondaryColor: document.getElementById('secondaryColor').value,
-                fontFamily: document.getElementById('fontFamily').value,
-                fontSize: document.getElementById('fontSize').value
-            },
-            content: {
-                experience: document.getElementById('experience').value,
-                skills: document.getElementById('skills').value,
-                projects: document.getElementById('projects').value,
-                education: document.getElementById('education').value,
-                linkedin: document.getElementById('linkedin').value,
-                github: document.getElementById('github').value,
-                portfolio: document.getElementById('portfolio').value
-            },
-            effects: {
-                threeDEffect: document.getElementById('threeDEffect').value,
-                animationSpeed: document.getElementById('animationSpeed').value,
-                effectColor: document.getElementById('effectColor').value,
-                parallaxEnabled: document.getElementById('parallaxEnabled').checked
-            }
-        };
-
-        // Salva no localStorage
-        localStorage.setItem(`portfolio_${this.currentUser.username}`, JSON.stringify(this.portfolioData));
-        
-        // Aplica as configurações
+        // Usa o sistema de salvamento automático
+        this.collectFormData();
+        this.saveToLocalStorage();
         this.applyPortfolioData();
         
         alert('Portfólio salvo com sucesso!');

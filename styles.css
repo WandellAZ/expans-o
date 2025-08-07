@@ -107,6 +107,132 @@ body {
     margin: 0.5rem 0;
 }
 
+.forgot-password {
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.forgot-password a {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.3s ease;
+}
+
+.forgot-password a:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+/* Tela de Recuperação de Senha */
+.forgot-password-screen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.forgot-password-container {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 450px;
+    text-align: center;
+}
+
+.forgot-password-header h1 {
+    color: #333;
+    margin-bottom: 0.5rem;
+    font-size: 2rem;
+}
+
+.forgot-password-header p {
+    color: #666;
+    margin-bottom: 2rem;
+}
+
+.email-form,
+.code-form,
+.new-password-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.recovery-btn {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.recovery-btn:hover {
+    transform: translateY(-2px);
+}
+
+.verification-info {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    border: 1px solid #e1e5e9;
+}
+
+.verification-info p {
+    margin: 0.5rem 0;
+    color: #555;
+}
+
+.verification-info strong {
+    color: #007bff;
+}
+
+.code-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+#verificationCode {
+    font-size: 24px;
+    text-align: center;
+    letter-spacing: 0.5rem;
+    font-weight: bold;
+    padding: 15px;
+}
+
+.code-hint {
+    font-size: 12px;
+    color: #666;
+    font-style: italic;
+}
+
+.forgot-password-footer {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e1e5e9;
+}
+
+.forgot-password-footer a {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.3s ease;
+}
+
+.forgot-password-footer a:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
 /* Interface Principal */
 .main-interface {
     min-height: 100vh;
@@ -140,6 +266,35 @@ body {
 .header-actions {
     display: flex;
     gap: 1rem;
+    align-items: center;
+}
+
+.auto-save-indicator {
+    background: #28a745;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    animation: pulse 2s infinite;
+}
+
+.auto-save-indicator.saving {
+    background: #ffc107;
+    color: #212529;
+}
+
+.auto-save-indicator.saved {
+    background: #28a745;
+    color: white;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
 }
 
 .btn {

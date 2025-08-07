@@ -10,6 +10,7 @@ Um sistema completo de portfólio personalizável com login, edição em tempo r
 - Login persistente (não precisa fazer login toda vez)
 - Logout seguro
 - **Painel de Admin**: Criação e gerenciamento de usuários
+- **Recuperação de Senha**: Sistema de recuperação por email com código de verificação
 
 ### 🎯 Edição de Portfólio
 - **Perfil**: Nome, título, email, telefone, sobre você, foto de perfil
@@ -36,8 +37,9 @@ Um sistema completo de portfólio personalizável com login, edição em tempo r
 ### 1. Acesso
 1. Abra o arquivo `index.html` no seu navegador
 2. Faça login com as credenciais de teste:
-   - **Admin**: `admin` / `admin123`
-   - **Usuário**: `user` / `user123`
+   - **Admin**: `admin` / `admin123` (email: admin@exemplo.com)
+   - **Usuário**: `user` / `user123` (email: user@exemplo.com)
+3. **Recuperação de Senha**: Clique em "Esqueci minha senha" e siga os passos
 
 ### 2. Edição do Portfólio
 1. Clique no botão **"Editar"** no cabeçalho
@@ -60,16 +62,26 @@ Um sistema completo de portfólio personalizável com login, edição em tempo r
 - **Efeitos 3D**: Selecione e configure animações
 - **Links Sociais**: Adicione LinkedIn, GitHub, portfólio
 
-### 4. Salvamento
-1. Clique em **"Salvar"** para guardar suas alterações
-2. Os dados são salvos automaticamente no navegador
-3. Clique em **"Visualizar"** para ver o resultado final
+### 4. Salvamento Automático
+1. **Salvamento em Tempo Real**: Todas as alterações são salvas automaticamente após 2 segundos
+2. **Indicador Visual**: Mostra status de salvamento no cabeçalho
+3. **Imagens e Fotos**: Salvas automaticamente como base64
+4. **Botão Manual**: Ainda disponível para salvamento manual
+5. **Dados Persistidos**: Todos os dados ficam salvos no navegador
 
 ### 5. Gerenciamento de Usuários (Admin)
 - **Criar Usuário**: Nome de usuário, nome completo, senha e tipo
 - **Validações**: Senha mínima 6 caracteres, confirmação de senha
 - **Excluir Usuário**: Remove usuários (exceto o próprio admin)
 - **Tipos de Usuário**: Normal ou Administrador
+- **Email Automático**: Gerado automaticamente baseado no username
+
+### 6. Recuperação de Senha
+- **Email**: Digite o email cadastrado no sistema
+- **Código de Verificação**: Código de 6 dígitos enviado por email
+- **Tempo Limite**: 5 minutos para usar o código
+- **Nova Senha**: Defina uma nova senha com confirmação
+- **Validações**: Senha mínima 6 caracteres, confirmação obrigatória
 
 ## 📁 Estrutura do Projeto
 
@@ -113,10 +125,13 @@ O sistema é totalmente responsivo e funciona em:
 
 ## 💾 Armazenamento
 
-- Os dados são salvos no **LocalStorage** do navegador
-- Cada usuário tem seu próprio portfólio salvo
-- Os dados persistem entre sessões
-- Não há necessidade de servidor ou banco de dados
+- **Salvamento Automático**: Todos os dados são salvos automaticamente após 2 segundos de inatividade
+- **LocalStorage**: Os dados são salvos no **LocalStorage** do navegador
+- **Imagens Base64**: Fotos e imagens são convertidas e salvas como base64
+- **Cada usuário tem seu próprio portfólio salvo**
+- **Os dados persistem entre sessões**
+- **Não há necessidade de servidor ou banco de dados**
+- **Indicador Visual**: Mostra status de salvamento em tempo real
 
 ## 🔧 Personalização Avançada
 
